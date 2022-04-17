@@ -24,7 +24,7 @@ struct MemoryDevice {
 	 * @param count the number of bytes to write
 	 * @return pointer to beginning of local data
 	 */
-	virtual uint8_t *write(uint32_t to, uint8_t *from, size_t count) = 0;
+	virtual uint8_t *write(uint32_t to, const uint8_t *from, size_t count) = 0;
 };
 
 } // namespace rambock
