@@ -29,6 +29,7 @@ class Driver_23LC1024 : public MemoryDevice {
 		WRMR = 0x01,
 	};
 
+	void reset();
 	void setMode(Mode mode);
 	void sendAddress(uint32_t address);
 
@@ -51,7 +52,20 @@ Driver_23LC1024::Driver_23LC1024(int cs) : m_cs(cs) {
 	digitalWrite(m_cs, HIGH);
 }
 
-void Driver_23LC1024::begin() { setMode(Mode::SEQUENTIAL); }
+void Driver_23LC1024::reset() {
+	SPI.beginTransaction(SPISettings(F_CPU, MSBFIRST, SPI_MODE0));
+	digitalWrite(m_cs, LOW);
+
+	SPI.transfer(Command::RSTIO);
+
+	digitalWrite(m_cs, HIGH);
+	SPI.endTransaction();
+}
+
+void Driver_23LC1024::begin() {
+	reset();
+	setMode(Mode::SEQUENTIAL);
+}
 
 void Driver_23LC1024::setMode(Mode mode) {
 	SPI.beginTransaction(SPISettings(F_CPU, MSBFIRST, SPI_MODE0));
