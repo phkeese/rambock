@@ -11,6 +11,8 @@ namespace rambock {
  * aware of anything other than external addresses.
  */
 struct MemoryAllocator {
+	virtual ~MemoryAllocator() {}
+
 	/** Allocates external memory of at least count bytes
 	 * @param count the number of bytes to allocate
 	 * @return the address at which count bytes lie
