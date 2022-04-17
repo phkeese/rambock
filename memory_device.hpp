@@ -5,8 +5,9 @@
 
 namespace rambock {
 
-// Abstract Memory Device
-// Allows for mutliple layers of caching, paging, etc.
+/** Abstract Memory Device
+ * Allows for mutliple layers of caching, paging, etc.
+ */
 struct MemoryDevice {
 	virtual ~MemoryDevice(){};
 

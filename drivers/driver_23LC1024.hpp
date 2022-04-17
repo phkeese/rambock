@@ -5,6 +5,12 @@
 
 namespace rambock {
 
+/** Driver for Microchip 23LC1024 external SRAM
+ * Website: https://www.microchip.com/en-us/product/23LC1024
+ * Datasheet: https://ww1.microchip.com/downloads/en/DeviceDoc/20005142C.pdf
+ *
+ * Only supports SPI mode
+ */
 class Driver_23LC1024 : public MemoryDevice {
 	enum Mode {
 		BYTE = 0x00,
