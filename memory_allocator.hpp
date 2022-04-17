@@ -14,6 +14,7 @@ struct MemoryAllocator {
 	/** Allocates external memory of at least count bytes
 	 * @param count the number of bytes to allocate
 	 * @return the address at which count bytes lie
+	 * returns 0 in case of allocation error
 	 */
 	virtual uint32_t allocate(size_t count) = 0;
 
