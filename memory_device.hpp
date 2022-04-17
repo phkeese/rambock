@@ -8,6 +8,8 @@ namespace rambock {
 // Abstract Memory Device
 // Allows for mutliple layers of caching, paging, etc.
 struct MemoryDevice {
+	virtual ~MemoryDevice(){};
+
 	/** Reads from a device into local storage
 	 * @param from the address to read from
 	 * @param to the address to copy the data to
