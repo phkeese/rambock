@@ -105,21 +105,22 @@ void SimpleAllocator::writeHeader(uint32_t to, Header data) {
 }
 
 uint32_t SimpleAllocator::allocate(size_t count) {
+#define ROUNDUP(c)                                                             \
+	(sizeof(Header) * (((c) + sizeof(Header) - 1) / sizeof(Header)))
 	// align to headers
-	count = sizeof(Header) * ((count + sizeof(Header) - 1) / sizeof(Header));
-	size_t totalSize = sizeof(Header) + count;
+	size_t totalSize = sizeof(Header) + ROUNDUP(count);
 
 	// Find next available part of memory by checking for each header, if we
 	// can fit our data between it and the next. If not, try again at the next
 	// header. Once we reach the end of RAM, return 0.
 	Header current = head();
 	while (true) {
-		const size_t available = current.next - current.end;
+		const size_t available = current.next - ROUNDUP(current.end);
 
 		// check if we can fit into the space between the current block's end
 		// and the header for the next block
 		if (totalSize <= available) {
-			uint32_t newAddress = current.end;
+			uint32_t newAddress = ROUNDUP(current.end);
 
 			Header newHeader{};
 			newHeader.setAddress(newAddress);
@@ -153,6 +154,7 @@ uint32_t SimpleAllocator::allocate(size_t count) {
 			return 0;
 		}
 	}
+#undef ROUNDUP
 }
 
 size_t SimpleAllocator::free(uint32_t address) {
