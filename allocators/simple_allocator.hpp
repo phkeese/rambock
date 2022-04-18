@@ -20,7 +20,7 @@ class SimpleAllocator : public MemoryAllocator {
 		// addresses of previous and next block
 		uint32_t previous, next;
 		// range of allocated block
-		size_t begin, end;
+		uint32_t begin, end;
 
 		/** Calculate the address of the header
 		 * @return address of the header
