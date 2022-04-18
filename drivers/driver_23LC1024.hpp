@@ -45,8 +45,8 @@ class Driver_23LC1024 : public MemoryDevice {
 	 */
 	void begin();
 
-	virtual uint8_t *read(uint32_t from, uint8_t *to, size_t count) override;
-	virtual uint32_t write(uint32_t to, const uint8_t *from,
+	virtual void *read(uint32_t from, void *to, size_t count) override;
+	virtual uint32_t write(uint32_t to, const void *from,
 						   size_t count) override;
 };
 
@@ -91,15 +91,16 @@ void Driver_23LC1024::sendAddress(uint32_t address) {
 	SPI.transfer((uint8_t)(address >> 0));
 }
 
-uint8_t *Driver_23LC1024::read(uint32_t from, uint8_t *to, size_t count) {
+void *Driver_23LC1024::read(uint32_t from, void *to, size_t count) {
 	SPI.beginTransaction(SPI_SETTINGS);
 	digitalWrite(m_cs, LOW);
 
 	SPI.transfer(Command::READ);
 	sendAddress(from);
 
+	uint8_t *data = static_cast<uint8_t *>(to);
 	for (size_t i = 0; i < count; i++) {
-		to[i] = SPI.transfer(0);
+		data[i] = SPI.transfer(0);
 	}
 
 	digitalWrite(m_cs, HIGH);
@@ -108,16 +109,16 @@ uint8_t *Driver_23LC1024::read(uint32_t from, uint8_t *to, size_t count) {
 	return to;
 }
 
-uint32_t Driver_23LC1024::write(uint32_t to, const uint8_t *from,
-								size_t count) {
+uint32_t Driver_23LC1024::write(uint32_t to, const void *from, size_t count) {
 	SPI.beginTransaction(SPI_SETTINGS);
 	digitalWrite(m_cs, LOW);
 
 	SPI.transfer(Command::WRITE);
 	sendAddress(to);
 
+	const uint8_t *data = static_cast<const uint8_t *>(from);
 	for (size_t i = 0; i < count; i++) {
-		SPI.transfer(from[i]);
+		SPI.transfer(data[i]);
 	}
 
 	digitalWrite(m_cs, HIGH);

@@ -17,7 +17,7 @@ struct MemoryDevice {
 	 * @param count the number of bytes to read
 	 * @return pointer to beginning of local data
 	 */
-	virtual uint8_t *read(uint32_t from, uint8_t *to, size_t count) = 0;
+	virtual void *read(uint32_t from, void *to, size_t count) = 0;
 
 	/** Writes to a device from local storage
 	 * @param to the address to write to
@@ -25,7 +25,7 @@ struct MemoryDevice {
 	 * @param count the number of bytes to write
 	 * @return address of written data
 	 */
-	virtual uint32_t write(uint32_t to, const uint8_t *from, size_t count) = 0;
+	virtual uint32_t write(uint32_t to, const void *from, size_t count) = 0;
 };
 
 } // namespace rambock
