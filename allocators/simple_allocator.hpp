@@ -100,6 +100,8 @@ void SimpleAllocator::writeHeader(uint32_t to, Header data) {
 }
 
 uint32_t SimpleAllocator::allocate(size_t count) {
+	// align to headers
+	count = sizeof(Header) * ((count + sizeof(Header) - 1) / sizeof(Header));
 	size_t totalSize = sizeof(Header) + count;
 
 	// Find next available part of memory by checking for each header, if we
@@ -121,16 +123,21 @@ uint32_t SimpleAllocator::allocate(size_t count) {
 			// integrate into linked list
 			// before: current <-> next
 			// after:  current <-> newHeader <-> next
-			Header next = readHeader(current.next);
-			current.next = newHeader.address();
-			next.previous = newHeader.address();
+
+			newHeader.next = current.next;
 			newHeader.previous = current.address();
-			newHeader.next = next.address();
+			current.next = newAddress;
 
 			// write out changes to headers
-			writeHeader(next.address(), next);
 			writeHeader(newHeader.address(), newHeader);
 			writeHeader(current.address(), current);
+
+			// only touch next if it lies within bounds of memory
+			if (newHeader.next < end()) {
+				Header next = readHeader(newHeader.next);
+				next.previous = newAddress;
+				writeHeader(next.address(), next);
+			}
 
 			return newHeader.begin;
 		} else if (current.next < end()) {
