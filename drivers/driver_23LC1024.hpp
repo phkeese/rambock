@@ -12,6 +12,8 @@ namespace rambock {
  * Only supports SPI mode
  */
 class Driver_23LC1024 : public MemoryDevice {
+	static const SPISettings SPI_SETTINGS;
+
 	enum Mode {
 		BYTE = 0x00,
 		PAGE = 0x80,
@@ -46,6 +48,8 @@ class Driver_23LC1024 : public MemoryDevice {
 						   size_t count) override;
 };
 
+const SPISettings Driver_23LC1024::SPI_SETTINGS(F_CPU, MSBFIRST, SPI_MODE0);
+
 Driver_23LC1024::Driver_23LC1024(int cs) : m_cs(cs) {
 	// setup pin for use as chip select
 	pinMode(m_cs, OUTPUT);
@@ -53,7 +57,7 @@ Driver_23LC1024::Driver_23LC1024(int cs) : m_cs(cs) {
 }
 
 void Driver_23LC1024::reset() {
-	SPI.beginTransaction(SPISettings(F_CPU, MSBFIRST, SPI_MODE0));
+	SPI.beginTransaction(SPI_SETTINGS);
 	digitalWrite(m_cs, LOW);
 
 	SPI.transfer(Command::RSTIO);
@@ -68,7 +72,7 @@ void Driver_23LC1024::begin() {
 }
 
 void Driver_23LC1024::setMode(Mode mode) {
-	SPI.beginTransaction(SPISettings(F_CPU, MSBFIRST, SPI_MODE0));
+	SPI.beginTransaction(SPI_SETTINGS);
 	digitalWrite(m_cs, LOW);
 
 	SPI.transfer(Command::WRMR);
@@ -86,7 +90,7 @@ void Driver_23LC1024::sendAddress(uint32_t address) {
 }
 
 uint8_t *Driver_23LC1024::read(uint32_t from, uint8_t *to, size_t count) {
-	SPI.beginTransaction(SPISettings(F_CPU, MSBFIRST, SPI_MODE0));
+	SPI.beginTransaction(SPI_SETTINGS);
 	digitalWrite(m_cs, LOW);
 
 	SPI.transfer(Command::READ);
@@ -104,7 +108,7 @@ uint8_t *Driver_23LC1024::read(uint32_t from, uint8_t *to, size_t count) {
 
 uint32_t Driver_23LC1024::write(uint32_t to, const uint8_t *from,
 								size_t count) {
-	SPI.beginTransaction(SPISettings(F_CPU, MSBFIRST, SPI_MODE0));
+	SPI.beginTransaction(SPI_SETTINGS);
 	digitalWrite(m_cs, LOW);
 
 	SPI.transfer(Command::WRITE);
