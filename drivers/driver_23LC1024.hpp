@@ -40,7 +40,9 @@ class Driver_23LC1024 : public MemoryDevice {
   public:
 	Driver_23LC1024(int cs);
 
-	// setup device for random access
+	/** Sets up the device for random access
+	 * Sets the CS pin to output mode and resets the chip to SPI mode
+	 */
 	void begin();
 
 	virtual uint8_t *read(uint32_t from, uint8_t *to, size_t count) override;
@@ -50,11 +52,7 @@ class Driver_23LC1024 : public MemoryDevice {
 
 const SPISettings Driver_23LC1024::SPI_SETTINGS(F_CPU, MSBFIRST, SPI_MODE0);
 
-Driver_23LC1024::Driver_23LC1024(int cs) : m_cs(cs) {
-	// setup pin for use as chip select
-	pinMode(m_cs, OUTPUT);
-	digitalWrite(m_cs, HIGH);
-}
+Driver_23LC1024::Driver_23LC1024(int cs) : m_cs(cs) {}
 
 void Driver_23LC1024::reset() {
 	SPI.beginTransaction(SPI_SETTINGS);
@@ -67,6 +65,10 @@ void Driver_23LC1024::reset() {
 }
 
 void Driver_23LC1024::begin() {
+	// setup pin for use as chip select
+	pinMode(m_cs, OUTPUT);
+	digitalWrite(m_cs, HIGH);
+
 	reset();
 	setMode(Mode::SEQUENTIAL);
 }
