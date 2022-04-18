@@ -40,6 +40,11 @@ class Driver_23LC1024 : public MemoryDevice {
   public:
 	Driver_23LC1024(int cs);
 
+	/** Address just past last addressable byte
+	 * @return length of array in bytes
+	 */
+	static inline uint32_t size() { return 0x20000; }
+
 	/** Sets up the device for random access
 	 * Sets the CS pin to output mode and resets the chip to SPI mode
 	 */
