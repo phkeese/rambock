@@ -39,6 +39,11 @@ class SimpleAllocator : public MemoryAllocator {
 			return begin = address + sizeof(*this);
 		}
 
+		/** Data segment size
+		 * @return size in bytes
+		 */
+		inline size_t size() const { return end - begin; }
+
 		/** Set end to match begin and size
 		 * @param size size of data after header
 		 * @return new end value
@@ -150,6 +155,33 @@ uint32_t SimpleAllocator::allocate(size_t count) {
 	}
 }
 
-size_t SimpleAllocator::free(uint32_t address) {}
+size_t SimpleAllocator::free(uint32_t address) {
+	// find the address of this block's header
+	// done this way to let the Header struct decide about its size or optional
+	// padding.
+	Header header{};
+	header.begin = address;
+	// fill all necessary fields with actual data
+	header = readHeader(header.address());
+
+	// never free the head or out of bounds
+	if (header.address() <= 0 || header.end > end()) {
+		return 0;
+	}
+
+	// unlink from list
+	Header previous = readHeader(header.previous);
+	previous.next = header.next;
+	writeHeader(previous.address(), previous);
+
+	// only touch next if it lies within bounds of memory
+	if (header.next < end()) {
+		Header next = readHeader(header.next);
+		next.previous = previous.address();
+		writeHeader(next.address(), next);
+	}
+
+	return header.size();
+}
 
 } // namespace rambock
