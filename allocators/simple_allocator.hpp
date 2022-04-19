@@ -105,8 +105,7 @@ void SimpleAllocator::writeHeader(uint32_t to, Header data) {
 }
 
 uint32_t SimpleAllocator::allocate(size_t count) {
-#define ROUNDUP(c)                                                             \
-	(sizeof(Header) * (((c) + sizeof(Header) - 1) / sizeof(Header)))
+#define ROUNDUP(c) (4 * (((c) + 4 - 1) / 4))
 	// align to headers
 	size_t totalSize = sizeof(Header) + ROUNDUP(count);
 
