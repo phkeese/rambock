@@ -38,7 +38,7 @@ class Driver_23LC1024 : public MemoryDevice {
 	int m_cs;
 
   public:
-	Driver_23LC1024(int cs);
+	explicit Driver_23LC1024(int cs);
 
 	/** Address just past last addressable byte
 	 * @return length of array in bytes

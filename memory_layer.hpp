@@ -10,7 +10,7 @@ namespace rambock {
  */
 struct MemoryLayer : public MemoryDevice {
   protected:
-	MemoryLayer(MemoryDevice &memory);
+	explicit MemoryLayer(MemoryDevice &memory);
 
 	inline MemoryDevice &memory() const { return m_memory; }
 

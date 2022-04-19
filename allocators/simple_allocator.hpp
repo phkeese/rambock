@@ -166,7 +166,7 @@ size_t SimpleAllocator::free(uint32_t address) {
 	header = readHeader(header.address());
 
 	// never free the head or out of bounds
-	if (header.address() <= 0 || header.end > end()) {
+	if (!header.address() || header.end > end()) {
 		return 0;
 	}
 

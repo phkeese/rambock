@@ -11,7 +11,7 @@ namespace rambock {
  */
 class AccessDebugPrinter : public MemoryLayer {
   public:
-	AccessDebugPrinter(MemoryDevice &memory);
+	explicit AccessDebugPrinter(MemoryDevice &memory);
 
 	virtual void *read(uint32_t from, void *to, size_t count) override;
 	virtual uint32_t write(uint32_t to, const void *from,
@@ -23,7 +23,8 @@ AccessDebugPrinter::AccessDebugPrinter(MemoryDevice &memory)
 
 void *AccessDebugPrinter::read(uint32_t from, void *to, size_t count) {
 	char buf[64];
-	sprintf(buf, "read %lu from %06lx to %p", (unsigned long)count, from, to);
+	sprintf(buf, "read %lu from %06lx to %p", (unsigned long)count,
+			(unsigned long)from, to);
 	Serial.println(buf);
 
 	return memory().read(from, to, count);
@@ -32,7 +33,8 @@ void *AccessDebugPrinter::read(uint32_t from, void *to, size_t count) {
 uint32_t AccessDebugPrinter::write(uint32_t to, const void *from,
 								   size_t count) {
 	char buf[64];
-	sprintf(buf, "write %lu to %06lx from %p", (unsigned long)count, to, from);
+	sprintf(buf, "write %lu to %06lx from %p", (unsigned long)count,
+			(unsigned long)to, from);
 
 	Serial.println(buf);
 
