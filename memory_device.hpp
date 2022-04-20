@@ -1,7 +1,6 @@
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
+#include "rambock_common.hpp"
 
 namespace rambock {
 
@@ -17,7 +16,7 @@ struct MemoryDevice {
 	 * @param count the number of bytes to read
 	 * @return pointer to beginning of local data
 	 */
-	virtual void *read(uint32_t from, void *to, size_t count) = 0;
+	virtual void *read(Address from, void *to, Size count) = 0;
 
 	/** Writes to a device from local storage
 	 * @param to the address to write to
@@ -25,7 +24,7 @@ struct MemoryDevice {
 	 * @param count the number of bytes to write
 	 * @return address of written data
 	 */
-	virtual uint32_t write(uint32_t to, const void *from, size_t count) = 0;
+	virtual Address write(Address to, const void *from, Size count) = 0;
 };
 
 } // namespace rambock

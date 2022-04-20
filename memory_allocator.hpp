@@ -18,13 +18,13 @@ struct MemoryAllocator {
 	 * @return the address at which count bytes lie
 	 * returns 0 in case of allocation error
 	 */
-	virtual uint32_t allocate(size_t count) = 0;
+	virtual Address allocate(Size count) = 0;
 
 	/** Frees external memory at an address
 	 * @param address the beginning of the external memory to be freed
 	 * @return the number of bytes freed (may be larger than allocated)
 	 */
-	virtual size_t free(uint32_t address) = 0;
+	virtual Size free(Address address) = 0;
 };
 
 } // namespace rambock

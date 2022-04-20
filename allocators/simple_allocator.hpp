@@ -18,14 +18,14 @@ class SimpleAllocator : public MemoryAllocator {
 	 */
 	struct Header {
 		// addresses of previous and next block
-		uint32_t previous, next;
+		Address previous, next;
 		// range of allocated block
-		uint32_t begin, end;
+		Address begin, end;
 
 		/** Calculate the address of the header
 		 * @return address of the header
 		 */
-		inline uint32_t address() const {
+		inline Address address() const {
 			// because we place the header directly before its data, we can
 			// calculate the address of the header
 			return begin - sizeof(*this);
@@ -35,44 +35,44 @@ class SimpleAllocator : public MemoryAllocator {
 		 * @param address the address of the header itself
 		 * @return new begin value
 		 */
-		inline uint32_t setAddress(uint32_t address) {
+		inline Address setAddress(Address address) {
 			return begin = address + sizeof(*this);
 		}
 
 		/** Data segment size
 		 * @return size in bytes
 		 */
-		inline size_t size() const { return end - begin; }
+		inline Size size() const { return end - begin; }
 
 		/** Set end to match begin and size
 		 * @param size size of data after header
 		 * @return new end value
 		 */
-		inline uint32_t setSize(size_t size) { return end = begin + size; }
+		inline Address setSize(Size size) { return end = begin + size; }
 	};
 
 	// read the head from the array
 	Header head() { return readHeader(0); }
 
 	// address just past the last addressable byte
-	uint32_t m_end;
-	inline uint32_t end() const { return m_end; }
+	Address m_end;
+	inline Address end() const { return m_end; }
 
 	// helpers to ease use of headers
-	Header readHeader(uint32_t from);
-	void writeHeader(uint32_t to, Header data);
+	Header readHeader(Address from);
+	void writeHeader(Address to, Header data);
 
   public:
-	SimpleAllocator(MemoryDevice &memory, uint32_t end);
+	SimpleAllocator(MemoryDevice &memory, Address end);
 
 	// setup data structures in memory for allocation
 	void begin();
 
-	virtual uint32_t allocate(size_t count) override;
-	virtual size_t free(uint32_t address) override;
+	virtual Address allocate(Size count) override;
+	virtual Size free(Address address) override;
 };
 
-SimpleAllocator::SimpleAllocator(MemoryDevice &memory, uint32_t end)
+SimpleAllocator::SimpleAllocator(MemoryDevice &memory, Address end)
 	: m_memory{memory}, m_end(end) {}
 
 void SimpleAllocator::begin() {
@@ -94,32 +94,32 @@ void SimpleAllocator::begin() {
 	writeHeader(head.address(), head);
 }
 
-SimpleAllocator::Header SimpleAllocator::readHeader(uint32_t from) {
+SimpleAllocator::Header SimpleAllocator::readHeader(Address from) {
 	Header header;
 	memory().read(from, &header, sizeof(header));
 	return header;
 }
 
-void SimpleAllocator::writeHeader(uint32_t to, Header data) {
+void SimpleAllocator::writeHeader(Address to, Header data) {
 	memory().write(to, &data, sizeof(data));
 }
 
-uint32_t SimpleAllocator::allocate(size_t count) {
+Address SimpleAllocator::allocate(Size count) {
 #define ROUNDUP(c) (4 * (((c) + 4 - 1) / 4))
 	// align to headers
-	size_t totalSize = sizeof(Header) + ROUNDUP(count);
+	Size totalSize = sizeof(Header) + ROUNDUP(count);
 
 	// Find next available part of memory by checking for each header, if we
 	// can fit our data between it and the next. If not, try again at the next
 	// header. Once we reach the end of RAM, return 0.
 	Header current = head();
 	while (true) {
-		const size_t available = current.next - ROUNDUP(current.end);
+		const Size available = current.next - ROUNDUP(current.end);
 
 		// check if we can fit into the space between the current block's end
 		// and the header for the next block
 		if (totalSize <= available) {
-			uint32_t newAddress = ROUNDUP(current.end);
+			Address newAddress = ROUNDUP(current.end);
 
 			Header newHeader{};
 			newHeader.setAddress(newAddress);
@@ -156,7 +156,7 @@ uint32_t SimpleAllocator::allocate(size_t count) {
 #undef ROUNDUP
 }
 
-size_t SimpleAllocator::free(uint32_t address) {
+Size SimpleAllocator::free(Address address) {
 	// find the address of this block's header
 	// done this way to let the Header struct decide about its size or optional
 	// padding.
