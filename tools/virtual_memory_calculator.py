@@ -1,3 +1,5 @@
+from ast import Lambda
+from cmath import inf
 import math
 from os import abort
 from typing import List
@@ -12,12 +14,12 @@ class OptionParser:
     def _set_option(self, name, value) -> None:
         self.options[name] = value
 
-    def add_flag(self, name: str) -> None:
+    def add_flag(self, name: str) -> bool:
         flag_string = f"--{name}"
         self.options[name] = flag_string in self.argv
         return self.options[name]
 
-    def add_number(self, name: str) -> None:
+    def add_number(self, name: str) -> int:
         option_string = f"--{name}="
         for arg in self.argv:
             if arg.startswith(option_string):
@@ -28,6 +30,17 @@ class OptionParser:
 
         return self.options[name]
 
+    def add_string_option(self, name) -> str:
+        option_string = f"--{name}="
+        for arg in self.argv:
+            if arg.startswith(option_string):
+                value = arg.split(option_string)[1]
+                self.options[name] = value
+        if name not in self.options:
+            return ""
+
+        return self.options[name]
+
     def get_options(self) -> dict:
         return self.options
 
@@ -35,6 +48,9 @@ class OptionParser:
 class Bunch(object):
     def __init__(self, adict):
         self.__dict__.update(adict)
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
 
 def error(message: str):
@@ -121,13 +137,60 @@ def main():
     address_bits = parser.add_number("address_bits")
     bytes_total = 2**address_bits
 
+    maximize_option = parser.add_string_option("maximize")
+    minimize_option = parser.add_string_option("minimize")
+    if maximize_option:
+        maximize(address_bits, maximize_option)
+        return
+    elif minimize_option:
+        minimize(address_bits, minimize_option)
+        return
+
     # page size to divide it into
     page_size = parser.add_number("page_size")
     if page_size >= bytes_total:
         error("page size cannot be greater than total memory")
 
     result = Bunch(calculate(address_bits, page_size))
+    printValues(result)
 
+
+def maximize(address_bits: int, key: str):
+    print(f"Maximizing {key}")
+
+    def f(b, r):
+        return b[key] < r[key]
+
+    printValues(optimize(address_bits, f))
+
+
+def minimize(address_bits: int, key: str):
+    print(f"Minimizing {key}")
+
+    def f(b, r):
+        return b[key] > r[key]
+
+    printValues(optimize(address_bits, f))
+
+
+def optimize(address_bits: int, evaluator: Lambda) -> Bunch:
+    bytes_total = 2**address_bits
+
+    best = Bunch(calculate(address_bits, int(bytes_total / 2)))
+
+    for bits in range(address_bits):
+        page_size = 2**bits
+        try:
+            result = Bunch(calculate(address_bits, page_size))
+            if evaluator(best, result):
+                best = result
+        except Exception as e:
+            print(e)
+
+    return best
+
+
+def printValues(result: Bunch):
     print(f"Address size:      {result.address_bits} bits")
     print(f"Total bytes:       {result.bytes_total}")
     print(f"Page size:         {result.page_size}")
@@ -142,9 +205,6 @@ def main():
     print(
         f"maximum overhead:  {result.max_pages_used} pages ({result.overhead_bytes} bytes, {result.overhead_percentage}%)")
 
-
-def optimizeOverhead(total: int):
-    pass
 
 # def realize(address: int) -> int:
 #     bits = 32
