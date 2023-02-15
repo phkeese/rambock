@@ -6,6 +6,7 @@
 namespace rambock {
 
 using Address = uint32_t;
+constexpr Address null = 0;
 
 /** Necessary because size_t only covers the architecture the code is running on
  * On a system with < 64k RAM, this might be only 16 bit wide.
