@@ -4,3 +4,8 @@
 !*.c
 !*.h
 !*.py
+!CMakeLists.txt
+!.clang-format
+!.gitignore
+!README.md
+!LICENSE
