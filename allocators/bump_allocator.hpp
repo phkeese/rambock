@@ -1,15 +1,16 @@
 #pragma once
 
-#include "../memory_allocator.hpp"
 #include "../memory_device.hpp"
+#include "base_allocator.hpp"
 
 namespace rambock {
+namespace allocators {
 
 /** Unbound Bump Allocator
  * Allocates RAM by bumping a pointer, never reclaims memory
  * Will not raise an
  */
-class BumpAllocator : public MemoryAllocator {
+class BumpAllocator : public BaseAllocator {
 
 	Address m_base = 32; // steer clear of NULL and align to page boundaries
 	Address m_end;
@@ -25,7 +26,7 @@ class BumpAllocator : public MemoryAllocator {
 };
 
 BumpAllocator::BumpAllocator(MemoryDevice &memoryDevice, Address end)
-	: MemoryAllocator(memoryDevice)
+	: BaseAllocator(memoryDevice)
 	, m_end(end) {}
 
 Address BumpAllocator::allocate(Size count) {
@@ -43,4 +44,5 @@ Size BumpAllocator::free(Address address) {
 	return 0;
 }
 
+} // namespace allocators
 } // namespace rambock

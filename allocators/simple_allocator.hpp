@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../memory_allocator.hpp"
+#include "base_allocator.hpp"
 
 namespace rambock {
-
+namespace allocators {
 /** A simple memory allocator using a linked list of allocated sections
  * Does not try to prevent memory fragmentation and will always use the next
  * free block of RAM available.
  */
-class SimpleAllocator : public MemoryAllocator {
+class SimpleAllocator : public BaseAllocator {
 	/** Information about an allocated block of memory
 	 * Works as a linked list of blocks
 	 */
@@ -69,7 +69,7 @@ class SimpleAllocator : public MemoryAllocator {
 };
 
 SimpleAllocator::SimpleAllocator(MemoryDevice &memoryDevice, Address end)
-	: MemoryAllocator(memoryDevice)
+	: BaseAllocator(memoryDevice)
 	, m_end(end) {}
 
 void SimpleAllocator::begin() {
@@ -93,12 +93,12 @@ void SimpleAllocator::begin() {
 
 SimpleAllocator::Header SimpleAllocator::readHeader(Address from) {
 	Header header;
-	memory().read(from, &header, sizeof(header));
+	memoryDevice().read(from, &header, sizeof(header));
 	return header;
 }
 
 void SimpleAllocator::writeHeader(Address to, Header data) {
-	memory().write(to, &data, sizeof(data));
+	memoryDevice().write(to, &data, sizeof(data));
 }
 
 Address SimpleAllocator::allocate(Size count) {
@@ -182,4 +182,5 @@ Size SimpleAllocator::free(Address address) {
 	return header.size();
 }
 
+} // namespace allocators
 } // namespace rambock

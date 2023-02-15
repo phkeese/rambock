@@ -8,7 +8,7 @@ add_library(rambock
         allocators/simple_allocator.hpp
         examples/simple_usage.cpp
         external_ptr.hpp
-        memory_allocator.hpp
+        allocators/base_allocator.hpp
         memory_device.hpp
         memory_layer.hpp
         mocks/mock_memory_device.hpp
@@ -18,3 +18,5 @@ add_library(rambock
 add_executable(example
         examples/simple_usage.cpp
         )
+
+target_link_libraries(example rambock)
