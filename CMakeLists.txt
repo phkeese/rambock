@@ -4,6 +4,8 @@ project(rambock)
 set(CMAKE_CXX_STANDARD 11)
 
 add_library(rambock
+        allocators/bump_allocator.hpp
+        allocators/simple_allocator.hpp
         memory_allocator.hpp
         memory_device.hpp
         memory_layer.hpp
