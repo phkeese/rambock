@@ -7,7 +7,9 @@
 !.gitignore
 !README.md
 !LICENSE
+!allocators
 !examples
+!layers
 !mocks
 
 # Wildcards
