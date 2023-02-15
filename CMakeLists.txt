@@ -7,6 +7,7 @@ add_library(rambock
         allocators/base_allocator.hpp
         allocators/bump_allocator.hpp
         allocators/simple_allocator.hpp
+        allocators/template_allocator.hpp
         examples/simple_usage.cpp
         external_ptr.hpp
         layers/base_layer.hpp
