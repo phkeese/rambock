@@ -5,7 +5,7 @@
 namespace rambock {
 
 /** Abstract Memory Allocator
- * Allows for allocation and deallocation of external memory
+ * Allows for allocation and de-allocation of external memory
  * Only manages memory, does not interoperate with local copies, locks, etc.
  * Probably needs a MemoryDevice to be useful, but the interface alone is not
  * aware of anything other than external addresses.
