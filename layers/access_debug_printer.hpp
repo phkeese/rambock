@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../memory_device.hpp"
-#include "../memory_layer.hpp"
+#include "base_layer.hpp"
 #include <Arduino.h>
 
 namespace rambock {
+namespace layers {
 
 /** Access Debug Printer
  * Prints every access to the underlying device to the serial port
@@ -22,8 +23,11 @@ AccessDebugPrinter::AccessDebugPrinter(MemoryDevice &memory)
 
 void *AccessDebugPrinter::read(Address from, void *to, Size count) {
 	char buf[64];
-	sprintf(buf, "read %lu from %06lx to %p", (unsigned long)count,
-			(unsigned long)from, to);
+	sprintf(buf,
+			"read %lu from %06lx to %p",
+			(unsigned long)count,
+			(unsigned long)from,
+			to);
 	Serial.println(buf);
 
 	return memory().read(from, to, count);
@@ -31,12 +35,16 @@ void *AccessDebugPrinter::read(Address from, void *to, Size count) {
 
 Address AccessDebugPrinter::write(Address to, const void *from, Size count) {
 	char buf[64];
-	sprintf(buf, "write %lu to %06lx from %p", (unsigned long)count,
-			(unsigned long)to, from);
+	sprintf(buf,
+			"write %lu to %06lx from %p",
+			(unsigned long)count,
+			(unsigned long)to,
+			from);
 
 	Serial.println(buf);
 
 	return memory().write(to, from, count);
 }
 
+} // namespace layers
 } // namespace rambock

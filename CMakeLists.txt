@@ -9,8 +9,8 @@ add_library(rambock
         allocators/simple_allocator.hpp
         examples/simple_usage.cpp
         external_ptr.hpp
+        layers/base_layer.hpp
         memory_device.hpp
-        memory_layer.hpp
         mocks/mock_memory_device.hpp
         rambock_common.hpp
         )

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "memory_device.hpp"
+#include "../memory_device.hpp"
 
 namespace rambock {
+namespace layers {
 
 /** Abstract Memory Layer
  * Requires an underlying memory device to work on.
@@ -17,7 +18,8 @@ struct MemoryLayer : public MemoryDevice {
   private:
 	MemoryDevice &m_memory;
 };
+MemoryLayer::MemoryLayer(MemoryDevice &memory)
+	: m_memory{memory} {}
 
-MemoryLayer::MemoryLayer(MemoryDevice &memory) : m_memory{memory} {}
-
+} // namespace layers
 } // namespace rambock
