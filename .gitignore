@@ -1,11 +1,17 @@
+# Ignore everything unless otherwise specified
 *
-!*.cpp
-!*.hpp
-!*.c
-!*.h
-!*.py
+
+# Concrete files and folders
 !CMakeLists.txt
 !.clang-format
 !.gitignore
 !README.md
 !LICENSE
+!examples
+
+# Wildcards
+!**/*.cpp
+!**/*.hpp
+!**/*.c
+!**/*.h
+!**/*.py
