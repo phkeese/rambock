@@ -11,6 +11,9 @@ namespace rambock {
  * aware of anything other than external addresses.
  */
 struct MemoryAllocator {
+	MemoryAllocator(MemoryDevice &memoryDevice)
+		: _memoryDevice{memoryDevice} {}
+
 	virtual ~MemoryAllocator() {}
 
 	/** Allocates external memory of at least count bytes
@@ -25,6 +28,14 @@ struct MemoryAllocator {
 	 * @return the number of bytes freed (may be larger than allocated)
 	 */
 	virtual Size free(Address address) = 0;
+
+	/** Get memory device for this allocator
+	 * @return Memory device this allocator operates on
+	 */
+	inline MemoryDevice &memoryDevice() const { return _memoryDevice; }
+
+  private:
+	MemoryDevice &_memoryDevice;
 };
 
 } // namespace rambock

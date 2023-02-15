@@ -9,10 +9,6 @@ namespace rambock {
  * free block of RAM available.
  */
 class SimpleAllocator : public MemoryAllocator {
-	// memory device this allocator operates on
-	MemoryDevice &m_memory;
-	inline MemoryDevice &memory() const { return m_memory; }
-
 	/** Information about an allocated block of memory
 	 * Works as a linked list of blocks
 	 */
@@ -63,7 +59,7 @@ class SimpleAllocator : public MemoryAllocator {
 	void writeHeader(Address to, Header data);
 
   public:
-	SimpleAllocator(MemoryDevice &memory, Address end);
+	SimpleAllocator(MemoryDevice &memoryDevice, Address end);
 
 	// setup data structures in memory for allocation
 	void begin();
@@ -72,8 +68,9 @@ class SimpleAllocator : public MemoryAllocator {
 	virtual Size free(Address address) override;
 };
 
-SimpleAllocator::SimpleAllocator(MemoryDevice &memory, Address end)
-	: m_memory{memory}, m_end(end) {}
+SimpleAllocator::SimpleAllocator(MemoryDevice &memoryDevice, Address end)
+	: MemoryAllocator(memoryDevice)
+	, m_end(end) {}
 
 void SimpleAllocator::begin() {
 	/** Special header to store data about the array

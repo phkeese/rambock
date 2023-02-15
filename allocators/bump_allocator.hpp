@@ -18,13 +18,15 @@ class BumpAllocator : public MemoryAllocator {
 	/** Constructor
 	 * @param end the address just past the last addressable byte
 	 */
-	BumpAllocator(Address end);
+	BumpAllocator(MemoryDevice &memoryDevice, Address end);
 
 	virtual Address allocate(Size count) override;
 	virtual Size free(Address address) override;
 };
 
-BumpAllocator::BumpAllocator(Address end) : m_end(end) {}
+BumpAllocator::BumpAllocator(MemoryDevice &memoryDevice, Address end)
+	: MemoryAllocator(memoryDevice)
+	, m_end(end) {}
 
 Address BumpAllocator::allocate(Size count) {
 	if (m_base + count < m_end) {
