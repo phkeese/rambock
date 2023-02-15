@@ -4,17 +4,24 @@
 #include "../mocks/mock_memory_device.hpp"
 #include <iostream>
 
+using rambock::Address;
+using rambock::allocators::BumpAllocator;
+using rambock::allocators::SimpleAllocator;
+using rambock::MockMemoryDevice;
+using rambock::external_ptr;
+
 rambock::external_ptr<int> generate(rambock::MemoryDevice &memoryDevice) {
-	return rambock::external_ptr<int>{memoryDevice, 0};
+	return rambock::external_ptr<int>{memoryDevice};
 }
 
 int main() {
 	constexpr size_t SIZE = 64 * 1024;
-	rambock::MockMemoryDevice<SIZE> memory{};
-	rambock::allocators::BumpAllocator allocator{memory, SIZE};
-	rambock::allocators::SimpleAllocator simpleAllocator{memory, SIZE};
+	constexpr Address END = Address(SIZE);
+	MockMemoryDevice<SIZE> memory{};
+	BumpAllocator allocator{memory, END};
+	SimpleAllocator simpleAllocator{memory, END};
 
-	rambock::external_ptr<int> ptr{memory, 0};
+	external_ptr<int> ptr{memory, rambock::null};
 	auto second = ptr;
 	auto third = generate(memory);
 	third = second;

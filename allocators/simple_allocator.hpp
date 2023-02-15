@@ -48,7 +48,7 @@ class SimpleAllocator : public BaseAllocator {
 	};
 
 	// read the head from the array
-	Header head() { return readHeader(0); }
+	Header head() { return readHeader(Address(0)); }
 
 	// address just past the last addressable byte
 	Address m_end;
@@ -83,7 +83,7 @@ void SimpleAllocator::begin() {
 	 * header for a block of 0 bytes.
 	 */
 	Header head{};
-	head.setAddress(0);
+	head.setAddress(Address(0));
 	head.setSize(0);
 	head.previous = head.address();
 	head.next = end();
@@ -111,12 +111,13 @@ Address SimpleAllocator::allocate(Size count) {
 	// header. Once we reach the end of RAM, return 0.
 	Header current = head();
 	while (true) {
-		const Size available = current.next - ROUNDUP(current.end);
+		const Address endAddress = Address(ROUNDUP(current.end.value));
+		const Size available = current.next - endAddress;
 
 		// check if we can fit into the space between the current block's end
 		// and the header for the next block
 		if (totalSize <= available) {
-			Address newAddress = ROUNDUP(current.end);
+			Address newAddress = endAddress;
 
 			Header newHeader{};
 			newHeader.setAddress(newAddress);
@@ -147,7 +148,7 @@ Address SimpleAllocator::allocate(Size count) {
 			current = readHeader(current.next);
 		} else {
 			// end of list reached, no allocation possible
-			return 0;
+			return rambock::null;
 		}
 	}
 #undef ROUNDUP

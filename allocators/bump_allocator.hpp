@@ -12,7 +12,7 @@ namespace allocators {
  */
 class BumpAllocator : public BaseAllocator {
 
-	Address m_base = 32; // steer clear of NULL and align to page boundaries
+	Address m_base = Address(32); // steer clear of NULL and align to page boundaries
 	Address m_end;
 
   public:
@@ -25,9 +25,9 @@ class BumpAllocator : public BaseAllocator {
 	virtual Size free(Address address) override;
 };
 
-BumpAllocator::BumpAllocator(MemoryDevice &memoryDevice, Address end)
+BumpAllocator::BumpAllocator(MemoryDevice &memoryDevice, const Address end)
 	: BaseAllocator(memoryDevice)
-	, m_end(end) {}
+	, m_end{end} {}
 
 Address BumpAllocator::allocate(Size count) {
 	if (m_base + count < m_end) {
@@ -35,7 +35,7 @@ Address BumpAllocator::allocate(Size count) {
 		m_base += count;
 		return address;
 	} else {
-		return 0;
+		return rambock::null;
 	}
 }
 
