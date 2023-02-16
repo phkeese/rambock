@@ -1,20 +1,20 @@
 #include "../allocators/bump_allocator.hpp"
 #include "../allocators/simple_allocator.hpp"
+#include "../allocators/template_allocator.hpp"
 #include "../external_ptr.hpp"
 #include "../mocks/mock_memory_device.hpp"
-#include "../allocators/template_allocator.hpp"
 #include <iostream>
 
 using rambock::Address;
+using rambock::external_ptr;
+using rambock::MockMemoryDevice;
 using rambock::allocators::BumpAllocator;
 using rambock::allocators::SimpleAllocator;
-using rambock::MockMemoryDevice;
-using rambock::external_ptr;
 using rambock::allocators::TemplateAllocator;
 
-
-rambock::external_ptr<int> generate(rambock::MemoryDevice &memoryDevice) {
-	return rambock::external_ptr<int>{memoryDevice};
+rambock::external_ptr<int>
+generate(rambock::allocators::BaseAllocator &allocator) {
+	return rambock::external_ptr<int>{allocator};
 }
 
 int main() {
@@ -28,8 +28,8 @@ int main() {
 
 	auto ptr = allocator.make_external<int>(0);
 	auto second = ptr;
-	auto third = generate(memory);
+	auto third = generate(simpleAllocator);
 	third = second;
-	third = generate(memory);
-	std::cout << &ptr.memoryDevice();
+	third = generate(simpleAllocator);
+	std::cout << &ptr.allocator();
 }
