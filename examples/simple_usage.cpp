@@ -31,5 +31,6 @@ int main() {
 	auto third = generate(simpleAllocator);
 	third = second;
 	third = generate(simpleAllocator);
-	std::cout << &ptr.allocator();
+	*ptr = 10203040;
+	std::cout << &ptr.allocator() << " " << *ptr;
 }

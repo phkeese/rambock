@@ -21,8 +21,10 @@ struct TemplateAllocator {
 
 template <class T, class... Args>
 external_ptr<T> TemplateAllocator::make_external(Args &&...args) {
+	const Size allocation_size = external_ptr<T>::allocation_size;
+
 	// Request memory before constructing object
-	Address address = allocator().allocate(sizeof(T));
+	Address address = allocator().allocate(allocation_size);
 	if (!address) {
 		return external_ptr<T>{allocator(), Address::null()};
 	}
@@ -31,9 +33,7 @@ external_ptr<T> TemplateAllocator::make_external(Args &&...args) {
 	// @note T must be TriviallyCopyable
 	T value{args...};
 
-	// Copy to external memory
-	allocator().memoryDevice().write(address, &value, sizeof(value));
-
+	LocalCopy<T> local_copy{allocator().memoryDevice(), address, value};
 	return external_ptr<T>{allocator(), address};
 }
 

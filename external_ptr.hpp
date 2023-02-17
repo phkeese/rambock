@@ -1,12 +1,15 @@
 #pragma once
 
-#include "memory_device.hpp"
 #include "allocators/base_allocator.hpp"
+#include "local_copy.hpp"
+#include "memory_device.hpp"
 
 namespace rambock {
 
 template <typename T> struct external_ptr {
 	using Allocator = rambock::allocators::BaseAllocator;
+	static constexpr Size allocation_size =
+		sizeof(typename LocalCopy<T>::ExternalFrame);
 
 	constexpr external_ptr(Allocator &allocator)
 		: external_ptr(allocator, Address::null()) {}
@@ -20,6 +23,11 @@ template <typename T> struct external_ptr {
 
 	inline Allocator &allocator() const { return *_allocator; }
 	inline Address address() const { return _address; }
+
+	inline LocalCopy<T> operator->() { return this->operator*(); }
+	inline LocalCopy<T> operator*() {
+		return LocalCopy<T>{allocator().memoryDevice(), address()};
+	}
 
   private:
 	// @note Use a pointer to allow copy-assignment but enforce reference in
