@@ -18,7 +18,8 @@ struct Address {
 	constexpr explicit Address(const value_type value)
 		: value{value} {}
 
-	constexpr operator bool() const { return bool(value); }
+	template <typename T> constexpr operator T() const { return T(value); }
+
 	inline Address &operator+=(const Size n) {
 		value += n;
 		return *this;

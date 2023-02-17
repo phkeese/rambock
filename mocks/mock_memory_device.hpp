@@ -21,8 +21,8 @@ template <size_t S> struct MockMemoryDevice : public MemoryDevice {
 	}
 
   private:
-	inline void *to_address(Address address) {
-		return static_cast<void *>(&_memory[0] + address);
+	inline uint8_t *to_address(Address address) {
+		return &_memory[address];
 	}
 	uint8_t _memory[S];
 };
