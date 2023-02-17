@@ -58,8 +58,8 @@ struct Address {
 	}
 
 	value_type value = 0;
-};
 
-constexpr Address null = Address{0};
+	static constexpr Address null() { return Address(0); };
+};
 
 } // namespace rambock

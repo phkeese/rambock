@@ -35,7 +35,7 @@ Address BumpAllocator::allocate(Size count) {
 		m_base += count;
 		return address;
 	} else {
-		return rambock::null;
+		return Address::null();
 	}
 }
 

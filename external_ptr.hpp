@@ -9,7 +9,7 @@ template <typename T> struct external_ptr {
 	using Allocator = rambock::allocators::BaseAllocator;
 
 	constexpr external_ptr(Allocator &allocator)
-		: external_ptr(allocator, rambock::null) {}
+		: external_ptr(allocator, Address::null()) {}
 	constexpr external_ptr(Allocator &allocator, const Address address)
 		: _allocator{&allocator}
 		, _address{address} {}
@@ -18,7 +18,7 @@ template <typename T> struct external_ptr {
 	external_ptr &operator=(const external_ptr &) = default;
 	external_ptr &operator=(external_ptr &&) noexcept = default;
 
-	inline Allocator &allocator() const {return *_allocator;}
+	inline Allocator &allocator() const { return *_allocator; }
 	inline Address address() const { return _address; }
 
   private:

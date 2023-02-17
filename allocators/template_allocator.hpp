@@ -24,7 +24,7 @@ external_ptr<T> TemplateAllocator::make_external(Args &&...args) {
 	// Request memory before constructing object
 	Address address = allocator().allocate(sizeof(T));
 	if (!address) {
-		return external_ptr<T>{allocator(), rambock::null};
+		return external_ptr<T>{allocator(), Address::null()};
 	}
 
 	// Construct object

@@ -148,7 +148,7 @@ Address SimpleAllocator::allocate(Size count) {
 			current = readHeader(current.next);
 		} else {
 			// end of list reached, no allocation possible
-			return rambock::null;
+			return Address::null();
 		}
 	}
 #undef ROUNDUP
