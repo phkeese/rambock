@@ -11,6 +11,7 @@
 !examples
 !layers
 !mocks
+!test
 
 # Wildcards
 !**/*.cpp

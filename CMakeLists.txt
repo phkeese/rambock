@@ -26,3 +26,16 @@ add_executable(example
         )
 
 target_link_libraries(example rambock)
+
+include(CTest)
+
+find_package(Catch2 REQUIRED)
+# These tests can use the Catch2-provided main
+add_executable(tests
+        test/test_simple_allocator.cpp
+        )
+
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain rambock)
+
+enable_testing()
+add_test(test-allocators tests [allocators])
