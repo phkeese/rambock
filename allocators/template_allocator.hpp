@@ -14,6 +14,8 @@ struct TemplateAllocator {
 
 	template <class T, class... Args>
 	external_ptr<T> make_external(Args &&...args);
+	
+	template <class T> external_ptr<T> make_array(size_t n);
 
   private:
 	BaseAllocator &_allocator;
@@ -34,6 +36,25 @@ external_ptr<T> TemplateAllocator::make_external(Args &&...args) {
 	T value{args...};
 
 	LocalCopy<T> local_copy{allocator().memory_device(), address, value};
+	return external_ptr<T>{allocator(), address};
+}
+
+template <class T> external_ptr<T> TemplateAllocator::make_array(size_t n) {
+	const Size allocation_size = external_ptr<T>::allocation_size * n;
+
+	// Request memory before constructing array
+	Address address = allocator().allocate(allocation_size);
+	if (!address) {
+		return external_ptr<T>{allocator(), Address::null()};
+	}
+
+	// Construct prototype
+	// @note T must be TriviallyCopyable and TriviallyConstructable
+	T value{};
+
+	for (size_t i = 0; i < n; i++) {
+		LocalCopy<T> local_copy{allocator().memory_device(), address, value};
+	}
 	return external_ptr<T>{allocator(), address};
 }
 

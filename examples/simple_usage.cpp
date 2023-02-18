@@ -31,5 +31,11 @@ int main() {
 	third = second;
 	third = generate(simple_allocator);
 	*ptr = 10203040;
-	std::cout << &ptr.allocator() << " " << *ptr;
+	std::cout << &ptr.allocator() << " " << *ptr << "\n";
+
+	auto array = allocator.make_array<int>(10);
+	for (int i = 0; i < 10; i++) {
+		array[i] = i + 1;
+		std::cout << array[i] << "\n";
+	}
 }
