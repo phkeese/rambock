@@ -65,7 +65,8 @@ constexpr external_ptr<T>::external_ptr(external_ptr::Allocator &allocator,
 
 template <typename T>
 bool external_ptr<T>::operator==(const external_ptr &rhs) const {
-	return _allocator == rhs._allocator && _address == rhs._address;
+	return &allocator().memory_device() == &rhs.allocator().memory_device() &&
+		   _address == rhs._address;
 }
 
 template <typename T>
