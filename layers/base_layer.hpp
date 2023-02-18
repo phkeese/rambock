@@ -18,8 +18,6 @@ struct MemoryLayer : public MemoryDevice {
   private:
 	MemoryDevice &_memory_device;
 };
-MemoryLayer::MemoryLayer(MemoryDevice &memory_device)
-	: _memory_device{memory_device} {}
 
 } // namespace layers
 } // namespace rambock

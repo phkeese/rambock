@@ -15,7 +15,9 @@ add_library(rambock
         allocators/template_allocator.hpp
         examples/simple_usage.cpp
         external_ptr.hpp
+        layers/access_counter.cpp
         layers/access_counter.hpp
+        layers/base_layer.cpp
         layers/base_layer.hpp
         layers/cache_layer.hpp
         memory_device.hpp
