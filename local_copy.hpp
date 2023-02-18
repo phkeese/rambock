@@ -5,9 +5,16 @@
 
 #ifdef STRICT_CHECKS
 #include <type_traits>
-#define CHECK_CONSTRAINTS(T)                       \
+#define CHECK_TRIVIALLY_COPYABLE(T)                \
 	static_assert(std::is_trivially_copyable<T>(), \
 				  "T must be trivially copyable");
+#define CHECK_TRIVIALLY_DEFAULT_CONSTRUCTABLE(T)                \
+	static_assert(std::is_trivially_default_constructible<T>(), \
+				  "T must be default constructable");
+
+#define CHECK_CONSTRAINTS(T)    \
+	CHECK_TRIVIALLY_COPYABLE(T) \
+	CHECK_TRIVIALLY_DEFAULT_CONSTRUCTABLE(T)
 #else
 #define CHECK_CONSTRAINTS(T)
 #endif
