@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../allocators/base_allocator.hpp"
 #include "../external_ptr.hpp"
-#include "base_allocator.hpp"
 
 namespace rambock {
-namespace allocators {
+namespace helpers {
+
+using rambock::allocators::BaseAllocator;
 
 struct TemplateAllocator {
 	explicit TemplateAllocator(BaseAllocator &allocator)
@@ -14,7 +16,7 @@ struct TemplateAllocator {
 
 	template <class T, class... Args>
 	external_ptr<T> make_external(Args &&...args);
-	
+
 	template <class T> external_ptr<T> make_array(size_t n);
 
   private:
@@ -58,5 +60,5 @@ template <class T> external_ptr<T> TemplateAllocator::make_array(size_t n) {
 	return external_ptr<T>{allocator(), address};
 }
 
-} // namespace allocators
+} // namespace helpers
 } // namespace rambock

@@ -12,9 +12,9 @@ add_library(rambock
         allocators/base_allocator.hpp
         allocators/bump_allocator.hpp
         allocators/simple_allocator.hpp
-        allocators/template_allocator.hpp
         examples/simple_usage.cpp
         external_ptr.hpp
+        helpers/template_allocator.hpp
         layers/access_counter.cpp
         layers/access_counter.hpp
         layers/base_layer.cpp
@@ -37,8 +37,8 @@ find_package(Catch2 REQUIRED)
 # These tests can use the Catch2-provided main
 add_executable(tests
         test/test_access_counter.cpp
-        test/test_core.cpp
         test/test_cache_layer.cpp
+        test/test_core.cpp
         test/test_external_ptr.cpp
         test/test_simple_allocator.cpp
         )

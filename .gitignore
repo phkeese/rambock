@@ -12,6 +12,7 @@
 !layers
 !mocks
 !test
+!helpers
 
 # Wildcards
 !**/*.cpp
