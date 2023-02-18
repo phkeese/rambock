@@ -58,6 +58,13 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 	}
 
 	SECTION("cache serves if possible") {
+		/*
+		 * We construct the following situation:
+		 * The memory behind the cache contains old information, the cache
+		 * itself has updated data. When accessing a region larger than the
+		 * cache, but overlapping the cached region, that data must equal that
+		 * already in cache.
+		 */
 		struct Values {
 			int i;
 			float f;
@@ -89,6 +96,12 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		// The cache must be consulted first, even for accesses larger than the
 		// cache size
 		REQUIRE(large.values == new_values);
+
+		// Write more than cache size and read back from cache
+		large.values = values;
+		cache_layer.write(low_address, &large, sizeof(large));
+		cache_layer.read(low_address, &new_values, sizeof(new_values));
+		REQUIRE(large.values == new_values);
 	}
 
 	SECTION("dirty flag marks changed content") {
@@ -98,6 +111,10 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		cache_layer.flush();
 		REQUIRE(!cache_layer.dirty());
 		cache_layer.read(low_address, &data, sizeof(data));
+		REQUIRE(!cache_layer.dirty());
+		cache_layer.write(low_address, &data, sizeof(data));
+		REQUIRE(cache_layer.dirty());
+		cache_layer.refresh();
 		REQUIRE(!cache_layer.dirty());
 	}
 }

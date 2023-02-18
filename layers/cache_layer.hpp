@@ -14,6 +14,7 @@ template <size_t CacheSize> struct CacheLayer : public MemoryLayer {
 
 	bool is_cached(Address address, Size count);
 	void flush();
+	void refresh();
 	inline bool dirty() const { return _dirty; }
 
   private:
@@ -47,6 +48,8 @@ void *CacheLayer<S>::read(Address from, void *to, Size count) {
 	if (cached_address) {
 		return memcpy(to, cached_address, count);
 	} else {
+		// Flush first to ensure read consistency
+		flush();
 		return memory_device().read(from, to, count);
 	}
 }
@@ -59,14 +62,17 @@ Address CacheLayer<S>::write(Address to, const void *from, Size count) {
 		memcpy(cached_address, from, count);
 		return to;
 	} else {
+		// Evict first to merge writes
+		// evict, not flush because written need to be held consistent with
+		// cache
+		evict();
 		return memory_device().write(to, from, count);
 	}
 }
 
 template <size_t S> void *CacheLayer<S>::cache(Address address, Size count) {
 	if (count > S) {
-		// Too large to cache, write back to ensure consistency
-		flush();
+		// Too large to cache
 		return nullptr;
 	} else if (is_cached(address, count)) {
 		// Already in cache
@@ -94,13 +100,18 @@ template <size_t S> void CacheLayer<S>::evict() {
 template <size_t S> void CacheLayer<S>::fetch(Address address) {
 	_begin = address;
 	_end = address + S;
-	memory_device().read(address, &_cache, S);
+	refresh();
 }
 
-template <size_t CacheSize> void CacheLayer<CacheSize>::flush() {
+template <size_t S> void CacheLayer<S>::flush() {
 	if (!_dirty)
 		return;
 	memory_device().write(_begin, &_cache, _end - _begin);
+	_dirty = false;
+}
+
+template <size_t S> void CacheLayer<S>::refresh() {
+	memory_device().read(_begin, &_cache, S);
 	_dirty = false;
 }
 
