@@ -56,4 +56,36 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		cache_layer.read(low_cached_address, &data, sizeof(data));
 		REQUIRE(access_counter.reads() == reads_before_cached_read);
 	}
+
+	SECTION("cache serves if possible") {
+		struct Values {
+			int i;
+			float f;
+
+			bool operator==(const Values &) const = default;
+		};
+
+		Values values{10, 3.1415};
+		// Write to memory
+		mock_memory_device.write(low_address, &values, sizeof(values));
+
+		// Write new data to cache
+		Values new_values{20, 1.5};
+		cache_layer.write(low_address, &new_values, sizeof(new_values));
+
+		// Write back old values
+		mock_memory_device.write(low_address, &values, sizeof(values));
+
+		// Read more than cache size
+		struct Large {
+			Values values;
+			uint8_t large_block[cache_size];
+		} large;
+
+		cache_layer.read(low_address, &large, sizeof(large));
+
+		// The cache must be consulted first, even for accesses larger than the
+		// cache size
+		REQUIRE(large.values == new_values);
+	}
 }

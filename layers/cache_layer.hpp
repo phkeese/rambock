@@ -13,6 +13,7 @@ template <size_t CacheSize> struct CacheLayer : public MemoryLayer {
 	virtual Address write(Address to, const void *from, Size count) override;
 
 	bool is_cached(Address address, Size count);
+	void flush();
 
   private:
 	/**
@@ -61,7 +62,8 @@ Address CacheLayer<S>::write(Address to, const void *from, Size count) {
 
 template <size_t S> void *CacheLayer<S>::cache(Address address, Size count) {
 	if (count > S) {
-		// Too large to cache
+		// Too large to cache, write back to ensure consistency
+		flush();
 		return nullptr;
 	} else if (is_cached(address, count)) {
 		// Already in cache
@@ -82,7 +84,7 @@ template <size_t S> bool CacheLayer<S>::is_cached(Address address, Size count) {
 }
 
 template <size_t S> void CacheLayer<S>::evict() {
-	memory_device().write(_begin, &_cache, _end - _begin);
+	flush();
 	_begin = _end = Address::null();
 }
 
@@ -90,6 +92,10 @@ template <size_t S> void CacheLayer<S>::fetch(Address address) {
 	_begin = address;
 	_end = address + S;
 	memory_device().read(address, &_cache, S);
+}
+
+template <size_t CacheSize> void CacheLayer<CacheSize>::flush() {
+	memory_device().write(_begin, &_cache, _end - _begin);
 }
 
 } // namespace layers
