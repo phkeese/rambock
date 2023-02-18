@@ -6,7 +6,7 @@
 namespace rambock {
 namespace layers {
 
-template <size_t S> struct CacheLayer : public MemoryLayer {
+template <size_t CacheSize> struct CacheLayer : public MemoryLayer {
 	explicit CacheLayer(MemoryDevice &memory_device);
 
 	virtual void *read(Address from, void *to, Size count) override;
@@ -28,7 +28,7 @@ template <size_t S> struct CacheLayer : public MemoryLayer {
 	void fetch(Address address);
 
 	Address _begin, _end;
-	uint8_t _cache[S];
+	uint8_t _cache[CacheSize];
 };
 
 template <size_t S>
