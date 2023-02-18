@@ -33,6 +33,7 @@ find_package(Catch2 REQUIRED)
 # These tests can use the Catch2-provided main
 add_executable(tests
         test/test_core.cpp
+        test/test_external_ptr.cpp
         test/test_simple_allocator.cpp
         )
 
@@ -41,3 +42,4 @@ target_link_libraries(tests PRIVATE Catch2::Catch2WithMain rambock)
 enable_testing()
 add_test(test-simple-allocator tests [simple_allocator])
 add_test(test-core tests [core])
+add_test(test-external-ptr tests [external_ptr])
