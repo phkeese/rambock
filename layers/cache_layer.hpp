@@ -1,5 +1,6 @@
 #pragma once
 #include "base_layer.hpp"
+#include <memory.h>
 #include <stdlib.h>
 
 namespace rambock {
@@ -11,6 +12,8 @@ template <size_t S> struct CacheLayer : public MemoryLayer {
 	virtual void *read(Address from, void *to, Size count) override;
 	virtual Address write(Address to, const void *from, Size count) override;
 
+	bool is_cached(Address address, Size count);
+
   private:
 	/**
 	 * @brief Cache an address if possible
@@ -21,9 +24,8 @@ template <size_t S> struct CacheLayer : public MemoryLayer {
 	 */
 	void *cache(Address address, Size count);
 
-	bool is_cached(Address address, Size count);
 	void evict();
-	void fetch(Address address, Size count);
+	void fetch(Address address);
 
 	Address _begin, _end;
 	uint8_t _cache[S];
@@ -38,26 +40,37 @@ CacheLayer<S>::CacheLayer(MemoryDevice &memory_device)
 
 template <size_t S>
 void *CacheLayer<S>::read(Address from, void *to, Size count) {
-	return nullptr;
+	void *cached_address = cache(from, count);
+	if (cached_address) {
+		return memcpy(to, cached_address, count);
+	} else {
+		return memory_device().read(from, to, count);
+	}
 }
 
 template <size_t S>
 Address CacheLayer<S>::write(Address to, const void *from, Size count) {
-	return Address();
+	void *cached_address = cache(to, count);
+	if (cached_address) {
+		memcpy(cached_address, from, count);
+		return to;
+	} else {
+		return memory_device().write(to, from, count);
+	}
 }
 
 template <size_t S> void *CacheLayer<S>::cache(Address address, Size count) {
 	if (count > S) {
 		// Too large to cache
 		return nullptr;
-	} else if (is_cached()) {
+	} else if (is_cached(address, count)) {
 		// Already in cache
 		Size offset = address - _begin;
 		return static_cast<void *>(&_cache[offset]);
 	} else {
 		// Cache new range
 		evict();
-		fetch(address, count);
+		fetch(address);
 		return static_cast<void *>(&_cache);
 	}
 }
@@ -70,12 +83,13 @@ template <size_t S> bool CacheLayer<S>::is_cached(Address address, Size count) {
 
 template <size_t S> void CacheLayer<S>::evict() {
 	memory_device().write(_begin, &_cache, _end - _begin);
+	_begin = _end = Address::null();
 }
 
-template <size_t S> void CacheLayer<S>::fetch(Address address, Size count) {
+template <size_t S> void CacheLayer<S>::fetch(Address address) {
 	_begin = address;
-	_end = address + count;
-	memory_device().read(address, &_cache, count);
+	_end = address + S;
+	memory_device().read(address, &_cache, S);
 }
 
 } // namespace layers

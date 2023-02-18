@@ -38,6 +38,7 @@ find_package(Catch2 REQUIRED)
 add_executable(tests
         test/test_access_counter.cpp
         test/test_core.cpp
+        test/test_cache_layer.cpp
         test/test_external_ptr.cpp
         test/test_simple_allocator.cpp
         )
