@@ -7,8 +7,9 @@ using namespace allocators;
 using namespace mocks;
 
 TEST_CASE("Simple allocator allocates memory", "[allocators]") {
-	MockMemoryDevice<1024> memory_device{};
-	SimpleAllocator allocator{memory_device, Address(1024)};
+	constexpr Size memory_size = 1024;
+	MockMemoryDevice<memory_size> memory_device{};
+	SimpleAllocator allocator{memory_device, Address(memory_size)};
 	allocator.begin();
 
 	SECTION("Allocation returns an address") {
@@ -52,5 +53,12 @@ TEST_CASE("Simple allocator allocates memory", "[allocators]") {
 		Size after = allocator.get_free_bytes();
 
 		REQUIRE(before == after);
+	}
+
+	SECTION("Too large allocations fail") {
+		Size before = allocator.get_free_bytes();
+		Address address = allocator.allocate(memory_size * 2);
+		REQUIRE(!address);
+		REQUIRE(allocator.get_free_bytes() == before);
 	}
 }
