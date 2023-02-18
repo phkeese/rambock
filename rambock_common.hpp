@@ -33,7 +33,7 @@ struct Address {
 		return Address(value + n);
 	}
 	template <typename T> constexpr Address operator-(const T &n) const {
-		return Address(value + n);
+		return Address(value - n);
 	}
 	constexpr Size operator-(const Address &other) const {
 		return value - other.value;
