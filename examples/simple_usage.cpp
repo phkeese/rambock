@@ -1,7 +1,6 @@
 #include "../allocators/bump_allocator.hpp"
 #include "../allocators/simple_allocator.hpp"
 #include "../allocators/template_allocator.hpp"
-#include "../external_ptr.hpp"
 #include "../mocks/mock_memory_device.hpp"
 #include <iostream>
 
@@ -18,19 +17,19 @@ generate(rambock::allocators::BaseAllocator &allocator) {
 }
 
 int main() {
-	constexpr size_t SIZE = 64 * 1024;
-	constexpr Address END = Address(SIZE);
-	MockMemoryDevice<SIZE> memory{};
-	BumpAllocator bumpAllocator{memory, END};
-	SimpleAllocator simpleAllocator{memory, END};
+	constexpr size_t memory_size = 64 * 1024;
+	constexpr Address memory_end = Address(memory_size);
+	MockMemoryDevice<memory_size> memory{};
+	BumpAllocator bump_allocator{memory, memory_end};
+	SimpleAllocator simple_allocator{memory, memory_end};
 
-	TemplateAllocator allocator{bumpAllocator};
+	TemplateAllocator allocator{bump_allocator};
 
 	auto ptr = allocator.make_external<int>(0);
 	auto second = ptr;
-	auto third = generate(simpleAllocator);
+	auto third = generate(simple_allocator);
 	third = second;
-	third = generate(simpleAllocator);
+	third = generate(simple_allocator);
 	*ptr = 10203040;
 	std::cout << &ptr.allocator() << " " << *ptr;
 }

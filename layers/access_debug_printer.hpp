@@ -30,7 +30,7 @@ void *AccessDebugPrinter::read(Address from, void *to, Size count) {
 			to);
 	Serial.println(buf);
 
-	return memory().read(from, to, count);
+	return memory_device().read(from, to, count);
 }
 
 Address AccessDebugPrinter::write(Address to, const void *from, Size count) {

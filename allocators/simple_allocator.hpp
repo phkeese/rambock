@@ -31,7 +31,7 @@ class SimpleAllocator : public BaseAllocator {
 		 * @param address the address of the header itself
 		 * @return new begin value
 		 */
-		inline Address setAddress(Address address) {
+		inline Address set_address(Address address) {
 			return begin = address + sizeof(*this);
 		}
 
@@ -44,33 +44,33 @@ class SimpleAllocator : public BaseAllocator {
 		 * @param size size of data after header
 		 * @return new end value
 		 */
-		inline Address setSize(Size size) { return end = begin + size; }
+		inline Address set_size(Size size) { return end = begin + size; }
 	};
 
 	// read the head from the array
-	Header head() { return readHeader(Address(0)); }
+	Header head() { return read_header(Address(0)); }
 
 	// address just past the last addressable byte
-	Address m_end;
-	inline Address end() const { return m_end; }
+	Address _end;
+	inline Address end() const { return _end; }
 
 	// helpers to ease use of headers
-	Header readHeader(Address from);
-	void writeHeader(Address to, Header data);
+	Header read_header(Address from);
+	void write_header(Address to, Header data);
 
   public:
-	SimpleAllocator(MemoryDevice &memoryDevice, Address end);
+	SimpleAllocator(MemoryDevice &memory_device, Address end);
 
 	// setup data structures in memory for allocation
 	void begin();
 
-	virtual Address allocate(Size count) override;
-	virtual Size free(Address address) override;
+	Address allocate(Size count) override;
+	Size free(Address address) override;
 };
 
-SimpleAllocator::SimpleAllocator(MemoryDevice &memoryDevice, Address end)
-	: BaseAllocator(memoryDevice)
-	, m_end(end) {}
+SimpleAllocator::SimpleAllocator(MemoryDevice &memory_device, Address end)
+	: BaseAllocator(memory_device)
+	, _end(end) {}
 
 void SimpleAllocator::begin() {
 	/** Special header to store data about the array
@@ -83,69 +83,69 @@ void SimpleAllocator::begin() {
 	 * header for a block of 0 bytes.
 	 */
 	Header head{};
-	head.setAddress(Address(0));
-	head.setSize(0);
+	head.set_address(Address(0));
+	head.set_size(0);
 	head.previous = head.address();
 	head.next = end();
 
-	writeHeader(head.address(), head);
+	write_header(head.address(), head);
 }
 
-SimpleAllocator::Header SimpleAllocator::readHeader(Address from) {
+SimpleAllocator::Header SimpleAllocator::read_header(Address from) {
 	Header header;
-	memoryDevice().read(from, &header, sizeof(header));
+	memory_device().read(from, &header, sizeof(header));
 	return header;
 }
 
-void SimpleAllocator::writeHeader(Address to, Header data) {
-	memoryDevice().write(to, &data, sizeof(data));
+void SimpleAllocator::write_header(Address to, Header data) {
+	memory_device().write(to, &data, sizeof(data));
 }
 
 Address SimpleAllocator::allocate(Size count) {
 #define ROUNDUP(c) (4 * (((c) + 4 - 1) / 4))
 	// align to headers
-	Size totalSize = sizeof(Header) + ROUNDUP(count);
+	Size total_size = sizeof(Header) + ROUNDUP(count);
 
 	// Find next available part of memory by checking for each header, if we
 	// can fit our data between it and the next. If not, try again at the next
 	// header. Once we reach the end of RAM, return 0.
 	Header current = head();
 	while (true) {
-		const Address endAddress = Address(ROUNDUP(current.end.value));
-		const Size available = current.next - endAddress;
+		const Address end_address = Address(ROUNDUP(current.end.value));
+		const Size available = current.next - end_address;
 
 		// check if we can fit into the space between the current block's end
 		// and the header for the next block
-		if (totalSize <= available) {
-			Address newAddress = endAddress;
+		if (total_size <= available) {
+			Address new_address = end_address;
 
-			Header newHeader{};
-			newHeader.setAddress(newAddress);
-			newHeader.setSize(count);
+			Header new_header{};
+			new_header.set_address(new_address);
+			new_header.set_size(count);
 
 			// integrate into linked list
 			// before: current <-> next
-			// after:  current <-> newHeader <-> next
+			// after:  current <-> new_header <-> next
 
-			newHeader.next = current.next;
-			newHeader.previous = current.address();
-			current.next = newAddress;
+			new_header.next = current.next;
+			new_header.previous = current.address();
+			current.next = new_address;
 
 			// write out changes to headers
-			writeHeader(newHeader.address(), newHeader);
-			writeHeader(current.address(), current);
+			write_header(new_header.address(), new_header);
+			write_header(current.address(), current);
 
 			// only touch next if it lies within bounds of memory
-			if (newHeader.next < end()) {
-				Header next = readHeader(newHeader.next);
-				next.previous = newAddress;
-				writeHeader(next.address(), next);
+			if (new_header.next < end()) {
+				Header next = read_header(new_header.next);
+				next.previous = new_address;
+				write_header(next.address(), next);
 			}
 
-			return newHeader.begin;
+			return new_header.begin;
 		} else if (current.next < end()) {
 			// not at end, move along the list
-			current = readHeader(current.next);
+			current = read_header(current.next);
 		} else {
 			// end of list reached, no allocation possible
 			return Address::null();
@@ -161,7 +161,7 @@ Size SimpleAllocator::free(Address address) {
 	Header header{};
 	header.begin = address;
 	// fill all necessary fields with actual data
-	header = readHeader(header.address());
+	header = read_header(header.address());
 
 	// never free the head or out of bounds
 	if (!header.address() || header.end > end()) {
@@ -169,15 +169,15 @@ Size SimpleAllocator::free(Address address) {
 	}
 
 	// unlink from list
-	Header previous = readHeader(header.previous);
+	Header previous = read_header(header.previous);
 	previous.next = header.next;
-	writeHeader(previous.address(), previous);
+	write_header(previous.address(), previous);
 
 	// only touch next if it lies within bounds of memory
 	if (header.next < end()) {
-		Header next = readHeader(header.next);
+		Header next = read_header(header.next);
 		next.previous = previous.address();
-		writeHeader(next.address(), next);
+		write_header(next.address(), next);
 	}
 
 	return header.size();

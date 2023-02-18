@@ -5,10 +5,10 @@
 namespace rambock {
 
 /** Abstract Memory Device
- * Allows for mutliple layers of caching, paging, etc.
+ * Allows for multiple layers of caching, paging, etc.
  */
 struct MemoryDevice {
-	virtual ~MemoryDevice(){};
+	virtual ~MemoryDevice()= default;;
 
 	/** Reads from a device into local storage
 	 * @param from the address to read from

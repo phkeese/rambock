@@ -7,7 +7,7 @@ namespace rambock {
 namespace allocators {
 
 struct TemplateAllocator {
-	TemplateAllocator(BaseAllocator &allocator)
+	explicit TemplateAllocator(BaseAllocator &allocator)
 		: _allocator(allocator) {}
 
 	inline BaseAllocator &allocator() const { return _allocator; }
@@ -33,7 +33,7 @@ external_ptr<T> TemplateAllocator::make_external(Args &&...args) {
 	// @note T must be TriviallyCopyable
 	T value{args...};
 
-	LocalCopy<T> local_copy{allocator().memoryDevice(), address, value};
+	LocalCopy<T> local_copy{allocator().memory_device(), address, value};
 	return external_ptr<T>{allocator(), address};
 }
 

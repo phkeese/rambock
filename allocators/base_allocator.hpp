@@ -13,10 +13,10 @@ namespace allocators {
  * aware of anything other than external addresses.
  */
 struct BaseAllocator {
-	BaseAllocator(MemoryDevice &memoryDevice)
-		: _memoryDevice{memoryDevice} {}
+	explicit BaseAllocator(MemoryDevice &memory_device)
+		: _memory_device{memory_device} {}
 
-	virtual ~BaseAllocator() {}
+	virtual ~BaseAllocator() = default;
 
 	/** Allocates external memory of at least count bytes
 	 * @param count the number of bytes to allocate
@@ -34,10 +34,10 @@ struct BaseAllocator {
 	/** Get memory device for this allocator
 	 * @return Memory device this allocator operates on
 	 */
-	inline MemoryDevice &memoryDevice() const { return _memoryDevice; }
+	inline MemoryDevice &memory_device() const { return _memory_device; }
 
   private:
-	MemoryDevice &_memoryDevice;
+	MemoryDevice &_memory_device;
 };
 
 } // namespace allocators

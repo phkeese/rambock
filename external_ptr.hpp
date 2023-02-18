@@ -11,8 +11,9 @@ template <typename T> struct external_ptr {
 	static constexpr Size allocation_size =
 		sizeof(typename LocalCopy<T>::ExternalFrame);
 
-	constexpr external_ptr(Allocator &allocator)
-		: external_ptr(allocator, Address::null()) {}
+	constexpr explicit external_ptr(Allocator &allocator)
+		: _allocator{&allocator}
+		, _address(Address::null()) {}
 	constexpr external_ptr(Allocator &allocator, const Address address)
 		: _allocator{&allocator}
 		, _address{address} {}
@@ -26,13 +27,13 @@ template <typename T> struct external_ptr {
 
 	inline LocalCopy<T> operator->() { return this->operator*(); }
 	inline LocalCopy<T> operator*() {
-		return LocalCopy<T>{allocator().memoryDevice(), address()};
+		return LocalCopy<T>{allocator().memory_device(), address()};
 	}
 
   private:
 	// @note Use a pointer to allow copy-assignment but enforce reference in
 	// constructor
-	Allocator *_allocator;
+	Allocator *_allocator{};
 	Address _address;
 };
 

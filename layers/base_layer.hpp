@@ -6,20 +6,20 @@ namespace rambock {
 namespace layers {
 
 /** Abstract Memory Layer
- * Requires an underlying memory device to work on.
+ * Requires an underlying MemoryDevice to work on.
  * Sub-classes need to implement read/write
  */
 struct MemoryLayer : public MemoryDevice {
   protected:
-	explicit MemoryLayer(MemoryDevice &memory);
+	explicit MemoryLayer(MemoryDevice &memory_device);
 
-	inline MemoryDevice &memory() const { return m_memory; }
+	inline MemoryDevice &memory_device() const { return _memory_device; }
 
   private:
-	MemoryDevice &m_memory;
+	MemoryDevice &_memory_device;
 };
-MemoryLayer::MemoryLayer(MemoryDevice &memory)
-	: m_memory{memory} {}
+MemoryLayer::MemoryLayer(MemoryDevice &memory_device)
+	: _memory_device{memory_device} {}
 
 } // namespace layers
 } // namespace rambock

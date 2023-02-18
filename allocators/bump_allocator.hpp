@@ -11,28 +11,28 @@ namespace allocators {
  * Will not raise an
  */
 class BumpAllocator : public BaseAllocator {
-
-	Address m_base = Address(32); // steer clear of NULL and align to page boundaries
-	Address m_end;
+	// steer clear of NULL and align to page boundaries
+	Address _base = Address(32);
+	Address _end;
 
   public:
 	/** Constructor
 	 * @param end the address just past the last addressable byte
 	 */
-	BumpAllocator(MemoryDevice &memoryDevice, Address end);
+	BumpAllocator(MemoryDevice &memory_device, Address end);
 
-	virtual Address allocate(Size count) override;
-	virtual Size free(Address address) override;
+	Address allocate(Size count) override;
+	Size free(Address address) override;
 };
 
-BumpAllocator::BumpAllocator(MemoryDevice &memoryDevice, const Address end)
-	: BaseAllocator(memoryDevice)
-	, m_end{end} {}
+BumpAllocator::BumpAllocator(MemoryDevice &memory_device, const Address end)
+	: BaseAllocator(memory_device)
+	, _end{end} {}
 
 Address BumpAllocator::allocate(Size count) {
-	if (m_base + count < m_end) {
-		Address address = m_base;
-		m_base += count;
+	if (_base + count < _end) {
+		Address address = _base;
+		_base += count;
 		return address;
 	} else {
 		return Address::null();
