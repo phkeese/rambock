@@ -11,12 +11,8 @@ template <typename T> struct external_ptr {
 	static constexpr Size allocation_size =
 		sizeof(typename LocalCopy<T>::ExternalFrame);
 
-	constexpr explicit external_ptr(Allocator &allocator)
-		: _allocator{&allocator}
-		, _address(Address::null()) {}
-	constexpr external_ptr(Allocator &allocator, const Address address)
-		: _allocator{&allocator}
-		, _address{address} {}
+	constexpr explicit external_ptr(Allocator &allocator);
+	constexpr external_ptr(Allocator &allocator, const Address address);
 	constexpr external_ptr(const external_ptr &) = default;
 	constexpr external_ptr(external_ptr &&) noexcept = default;
 	external_ptr &operator=(const external_ptr &) = default;
@@ -54,5 +50,16 @@ template <typename T>
 external_ptr<T> external_ptr<T>::operator-(size_t i) const {
 	return external_ptr{allocator(), address() - i * allocation_size};
 }
+
+template <typename T>
+constexpr external_ptr<T>::external_ptr(external_ptr::Allocator &allocator)
+	: _allocator{&allocator}
+	, _address(Address::null()) {}
+
+template <typename T>
+constexpr external_ptr<T>::external_ptr(external_ptr::Allocator &allocator,
+										const Address address)
+	: _allocator{&allocator}
+	, _address{address} {}
 
 } // namespace rambock
