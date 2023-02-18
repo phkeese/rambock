@@ -62,7 +62,9 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 			int i;
 			float f;
 
-			bool operator==(const Values &) const = default;
+			bool operator==(const Values &other) const {
+				return i == other.i && f == other.f;
+			};
 		};
 
 		Values values{10, 3.1415};
@@ -87,5 +89,15 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		// The cache must be consulted first, even for accesses larger than the
 		// cache size
 		REQUIRE(large.values == new_values);
+	}
+
+	SECTION("dirty flag marks changed content") {
+		REQUIRE(!cache_layer.dirty());
+		cache_layer.write(low_address, &data, sizeof(data));
+		REQUIRE(cache_layer.dirty());
+		cache_layer.flush();
+		REQUIRE(!cache_layer.dirty());
+		cache_layer.read(low_address, &data, sizeof(data));
+		REQUIRE(!cache_layer.dirty());
 	}
 }

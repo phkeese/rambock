@@ -14,6 +14,7 @@ template <size_t CacheSize> struct CacheLayer : public MemoryLayer {
 
 	bool is_cached(Address address, Size count);
 	void flush();
+	inline bool dirty() const { return _dirty; }
 
   private:
 	/**
@@ -30,6 +31,7 @@ template <size_t CacheSize> struct CacheLayer : public MemoryLayer {
 
 	Address _begin, _end;
 	uint8_t _cache[CacheSize];
+	bool _dirty;
 };
 
 template <size_t S>
@@ -53,6 +55,7 @@ template <size_t S>
 Address CacheLayer<S>::write(Address to, const void *from, Size count) {
 	void *cached_address = cache(to, count);
 	if (cached_address) {
+		_dirty = true;
 		memcpy(cached_address, from, count);
 		return to;
 	} else {
@@ -95,7 +98,10 @@ template <size_t S> void CacheLayer<S>::fetch(Address address) {
 }
 
 template <size_t CacheSize> void CacheLayer<CacheSize>::flush() {
+	if (!_dirty)
+		return;
 	memory_device().write(_begin, &_cache, _end - _begin);
+	_dirty = false;
 }
 
 } // namespace layers
