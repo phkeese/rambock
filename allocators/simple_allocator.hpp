@@ -146,6 +146,8 @@ Address SimpleAllocator::allocate(Size count) {
 				write_header(next.address(), next);
 			}
 
+			_free_bytes -= total_size;
+
 			return new_header.begin;
 		} else if (current.next < end()) {
 			// not at end, move along the list
@@ -184,6 +186,7 @@ Size SimpleAllocator::free(Address address) {
 		write_header(next.address(), next);
 	}
 
+	_free_bytes += header.size() + sizeof(header);
 	return header.size();
 }
 
