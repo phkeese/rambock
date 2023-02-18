@@ -15,6 +15,7 @@ add_library(rambock
         allocators/template_allocator.hpp
         examples/simple_usage.cpp
         external_ptr.hpp
+        layers/access_counter.hpp
         layers/base_layer.hpp
         layers/cache_layer.hpp
         memory_device.hpp
@@ -33,6 +34,7 @@ include(CTest)
 find_package(Catch2 REQUIRED)
 # These tests can use the Catch2-provided main
 add_executable(tests
+        test/test_access_counter.cpp
         test/test_core.cpp
         test/test_external_ptr.cpp
         test/test_simple_allocator.cpp
@@ -44,3 +46,4 @@ enable_testing()
 add_test(test-simple-allocator tests [simple_allocator])
 add_test(test-core tests [core])
 add_test(test-external-ptr tests [external_ptr])
+add_test(test-layers tests [layers])
