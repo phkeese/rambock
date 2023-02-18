@@ -40,6 +40,7 @@ template <typename T> struct external_ptr {
 		return external_ptr{allocator(), address() - i * allocation_size};
 	}
 	inline LocalCopy<T> operator[](size_t i) const { return *(*this + i); }
+	inline void free() const { allocator().free(address()); }
 
   private:
 	// @note Use a pointer to allow copy-assignment but enforce reference in
