@@ -4,6 +4,7 @@
 #include <memory>
 
 namespace rambock {
+namespace mocks {
 
 template <size_t S> struct MockMemoryDevice : public MemoryDevice {
 
@@ -25,4 +26,5 @@ template <size_t S> struct MockMemoryDevice : public MemoryDevice {
 	uint8_t _memory[S];
 };
 
+} // namespace mocks
 } // namespace rambock

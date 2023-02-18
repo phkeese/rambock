@@ -4,6 +4,7 @@
 
 using namespace rambock;
 using namespace allocators;
+using namespace mocks;
 
 TEST_CASE("Simple allocator allocates memory", "[allocators]") {
 	MockMemoryDevice<1024> memory_device{};

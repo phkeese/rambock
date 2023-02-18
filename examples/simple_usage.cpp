@@ -6,7 +6,7 @@
 
 using rambock::Address;
 using rambock::external_ptr;
-using rambock::MockMemoryDevice;
+using rambock::mocks::MockMemoryDevice;
 using rambock::allocators::BumpAllocator;
 using rambock::allocators::SimpleAllocator;
 using rambock::allocators::TemplateAllocator;
