@@ -12,7 +12,7 @@ template <size_t S> struct MockMemoryDevice : public MemoryDevice {
 		: MemoryDevice{}
 		, _memory{} {}
 
-	void *read(Address from, void *to, Size count) override {
+	void *read(void *to, Address from, Size count) override {
 		return std::memcpy(to, to_address(from), count);
 	}
 

@@ -1,8 +1,8 @@
 #include "access_counter.hpp"
 
-void *rambock::layers::AccessCounter::read(Address from, void *to, Size count) {
+void *rambock::layers::AccessCounter::read(void *to, Address from, Size count) {
 	_reads++;
-	return memory_device().read(from, to, count);
+	return memory_device().read(to, from, count);
 }
 rambock::Address rambock::layers::AccessCounter::write(Address to,
 													   const void *from,

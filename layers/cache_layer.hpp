@@ -9,7 +9,7 @@ namespace layers {
 template <size_t CacheSize> struct CacheLayer : public MemoryLayer {
 	explicit CacheLayer(MemoryDevice &memory_device);
 
-	virtual void *read(Address from, void *to, Size count) override;
+	virtual void *read(void *to, Address from, Size count) override;
 	virtual Address write(Address to, const void *from, Size count) override;
 
 	bool is_cached(Address address, Size count);
@@ -43,14 +43,14 @@ CacheLayer<S>::CacheLayer(MemoryDevice &memory_device)
 	, _cache{} {}
 
 template <size_t S>
-void *CacheLayer<S>::read(Address from, void *to, Size count) {
+void *CacheLayer<S>::read(void *to, Address from, Size count) {
 	void *cached_address = cache(from, count);
 	if (cached_address) {
 		return memcpy(to, cached_address, count);
 	} else {
 		// Flush first to ensure read consistency
 		flush();
-		return memory_device().read(from, to, count);
+		return memory_device().read(to, from, count);
 	}
 }
 
@@ -111,7 +111,7 @@ template <size_t S> void CacheLayer<S>::flush() {
 }
 
 template <size_t S> void CacheLayer<S>::refresh() {
-	memory_device().read(_begin, &_cache, S);
+	memory_device().read(&_cache, _begin, S);
 	_dirty = false;
 }
 

@@ -66,7 +66,6 @@ class SimpleAllocator : public BaseAllocator {
   public:
 	SimpleAllocator(MemoryDevice &memory_device, Address end);
 
-
 	Address allocate(Size count) override;
 	Size free(Address address) override;
 	virtual Size get_free_bytes() const override;
@@ -100,7 +99,7 @@ void SimpleAllocator::begin() {
 
 SimpleAllocator::Header SimpleAllocator::read_header(Address from) {
 	Header header;
-	memory_device().read(from, &header, sizeof(header));
+	memory_device().read(&header, from, sizeof(header));
 	return header;
 }
 

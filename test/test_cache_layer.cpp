@@ -30,7 +30,7 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		REQUIRE(!cache_layer.is_cached(low_address, sizeof(Data)));
 
 		int reads_before_fetch = access_counter.reads();
-		cache_layer.read(low_address, &data, sizeof(data));
+		cache_layer.read(&data, low_address, sizeof(data));
 
 		REQUIRE(cache_layer.is_cached(low_address, sizeof(Data)));
 		REQUIRE(access_counter.reads() > reads_before_fetch);
@@ -45,15 +45,15 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 
 		int low_readback = 0;
 		mock_memory_device.read(
-			low_address, &low_readback, sizeof(low_readback));
+			&low_readback, low_address, sizeof(low_readback));
 
 		REQUIRE(low_data == low_readback);
 	}
 
 	SECTION("cached addresses hit cache") {
-		cache_layer.read(low_address, &data, sizeof(data));
+		cache_layer.read(&data, low_address, sizeof(data));
 		int reads_before_cached_read = access_counter.reads();
-		cache_layer.read(low_cached_address, &data, sizeof(data));
+		cache_layer.read(&data, low_cached_address, sizeof(data));
 		REQUIRE(access_counter.reads() == reads_before_cached_read);
 	}
 
@@ -91,7 +91,7 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 			uint8_t large_block[cache_size];
 		} large;
 
-		cache_layer.read(low_address, &large, sizeof(large));
+		cache_layer.read(&large, low_address, sizeof(large));
 
 		// The cache must be consulted first, even for accesses larger than the
 		// cache size
@@ -100,7 +100,7 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		// Write more than cache size and read back from cache
 		large.values = values;
 		cache_layer.write(low_address, &large, sizeof(large));
-		cache_layer.read(low_address, &new_values, sizeof(new_values));
+		cache_layer.read(&new_values, low_address, sizeof(new_values));
 		REQUIRE(large.values == new_values);
 	}
 
@@ -110,7 +110,7 @@ TEST_CASE("cache layer caches accesses", "[layers]") {
 		REQUIRE(cache_layer.dirty());
 		cache_layer.flush();
 		REQUIRE(!cache_layer.dirty());
-		cache_layer.read(low_address, &data, sizeof(data));
+		cache_layer.read(&data, low_address, sizeof(data));
 		REQUIRE(!cache_layer.dirty());
 		cache_layer.write(low_address, &data, sizeof(data));
 		REQUIRE(cache_layer.dirty());

@@ -7,7 +7,7 @@ namespace layers {
 struct AccessCounter : public MemoryLayer {
 	explicit AccessCounter(MemoryDevice &memory_device);
 
-	void *read(Address from, void *to, Size count) override;
+	void *read(void *to, Address from, Size count) override;
 	Address write(Address to, const void *from, Size count) override;
 
 	inline int reads() const { return _reads; }

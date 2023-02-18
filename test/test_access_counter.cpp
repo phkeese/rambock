@@ -21,7 +21,7 @@ TEST_CASE("test access counter", "[layers]") {
 	}
 
 	SECTION("counts are kept separate") {
-		counter.read(address, &buffer, buffer_size);
+		counter.read(&buffer, address, buffer_size);
 
 		REQUIRE(counter.reads() == 1);
 		REQUIRE(counter.writes() == 0);
@@ -33,7 +33,7 @@ TEST_CASE("test access counter", "[layers]") {
 	}
 
 	SECTION("reset resets to zero") {
-		counter.read(address, &buffer, buffer_size);
+		counter.read(&buffer, address, buffer_size);
 
 		REQUIRE(counter.reads() == 1);
 

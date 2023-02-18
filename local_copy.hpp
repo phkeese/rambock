@@ -94,7 +94,7 @@ template <typename T> LocalCopy<T> &LocalCopy<T>::operator=(const T &value) {
 template <typename T>
 typename LocalCopy<T>::ExternalFrame LocalCopy<T>::read_frame() const {
 	ExternalFrame frame{};
-	memory_device().read(address(), &frame, sizeof(frame));
+	memory_device().read(&frame, address(), sizeof(frame));
 	return frame;
 }
 
