@@ -25,10 +25,21 @@ template <typename T> struct external_ptr {
 	inline Allocator &allocator() const { return *_allocator; }
 	inline Address address() const { return _address; }
 
-	inline LocalCopy<T> operator->() { return this->operator*(); }
-	inline LocalCopy<T> operator*() {
+	inline LocalCopy<T> operator->() const { return this->operator*(); }
+	inline LocalCopy<T> operator*() const {
 		return LocalCopy<T>{allocator().memory_device(), address()};
 	}
+	inline external_ptr &operator++() { *this = *this + 1; }
+	inline external_ptr &operator--() { *this = *this - 1; }
+	inline external_ptr operator++(int) const { return *this + 1; }
+	inline external_ptr operator--(int) const { return *this - 1; }
+	inline external_ptr operator+(size_t i) const {
+		return external_ptr{allocator(), address() + i * allocation_size};
+	}
+	inline external_ptr operator-(size_t i) const {
+		return external_ptr{allocator(), address() - i * allocation_size};
+	}
+	inline LocalCopy<T> operator[](size_t i) const { return *(*this + i); }
 
   private:
 	// @note Use a pointer to allow copy-assignment but enforce reference in
