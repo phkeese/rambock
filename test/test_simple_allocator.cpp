@@ -44,4 +44,13 @@ TEST_CASE("Simple allocator allocates memory", "[allocators]") {
 		Size after = allocator.get_free_bytes();
 		REQUIRE(before < after);
 	}
+
+	SECTION("Full free reclaims full memory") {
+		Size before = allocator.get_free_bytes();
+		Address address = allocator.allocate(100);
+		allocator.free(address);
+		Size after = allocator.get_free_bytes();
+
+		REQUIRE(before == after);
+	}
 }
