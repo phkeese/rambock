@@ -17,7 +17,7 @@ generate(rambock::allocators::BaseAllocator &allocator) {
 }
 
 int main() {
-	constexpr size_t memory_size = 64 * 1024;
+	constexpr size_t memory_size = 1024;
 	constexpr Address memory_end = Address(memory_size);
 	MockMemoryDevice<memory_size> memory{};
 	BumpAllocator bump_allocator{memory, memory_end};
@@ -38,4 +38,6 @@ int main() {
 		array[i] = i + 1;
 		std::cout << array[i] << "\n";
 	}
+
+	std::cout << bump_allocator.get_free_bytes() << " bytes available\n";
 }

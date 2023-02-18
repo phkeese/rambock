@@ -23,6 +23,7 @@ class BumpAllocator : public BaseAllocator {
 
 	Address allocate(Size count) override;
 	Size free(Address address) override;
+	Size get_free_bytes() const override;
 };
 
 BumpAllocator::BumpAllocator(MemoryDevice &memory_device, const Address end)
@@ -43,6 +44,8 @@ Size BumpAllocator::free(Address address) {
 	// do not reclaim any memory
 	return 0;
 }
+
+Size BumpAllocator::get_free_bytes() const { return _end - _base; }
 
 } // namespace allocators
 } // namespace rambock

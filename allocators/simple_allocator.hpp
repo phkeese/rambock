@@ -58,6 +58,8 @@ class SimpleAllocator : public BaseAllocator {
 	Header read_header(Address from);
 	void write_header(Address to, Header data);
 
+	Size _free_bytes;
+
   public:
 	SimpleAllocator(MemoryDevice &memory_device, Address end);
 
@@ -66,11 +68,13 @@ class SimpleAllocator : public BaseAllocator {
 
 	Address allocate(Size count) override;
 	Size free(Address address) override;
+	virtual Size get_free_bytes() const override;
 };
 
 SimpleAllocator::SimpleAllocator(MemoryDevice &memory_device, Address end)
 	: BaseAllocator(memory_device)
-	, _end(end) {}
+	, _end(end)
+	, _free_bytes{end} {}
 
 void SimpleAllocator::begin() {
 	/** Special header to store data about the array
@@ -182,6 +186,8 @@ Size SimpleAllocator::free(Address address) {
 
 	return header.size();
 }
+
+Size SimpleAllocator::get_free_bytes() const { return _free_bytes; }
 
 } // namespace allocators
 } // namespace rambock

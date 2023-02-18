@@ -36,6 +36,12 @@ struct BaseAllocator {
 	 */
 	inline MemoryDevice &memory_device() const { return _memory_device; }
 
+	/**
+	 * @brief Get number of unallocated bytes
+	 * @return Number of unallocated bytes
+	 */
+	virtual Size get_free_bytes() const = 0;
+
   private:
 	MemoryDevice &_memory_device;
 };
