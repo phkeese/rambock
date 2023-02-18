@@ -33,12 +33,8 @@ template <typename T> struct external_ptr {
 	inline external_ptr &operator--() { *this = *this - 1; }
 	inline external_ptr operator++(int) const { return *this + 1; }
 	inline external_ptr operator--(int) const { return *this - 1; }
-	inline external_ptr operator+(size_t i) const {
-		return external_ptr{allocator(), address() + i * allocation_size};
-	}
-	inline external_ptr operator-(size_t i) const {
-		return external_ptr{allocator(), address() - i * allocation_size};
-	}
+	inline external_ptr operator+(size_t i) const;
+	inline external_ptr operator-(size_t i) const;
 	inline LocalCopy<T> operator[](size_t i) const { return *(*this + i); }
 	inline void free() const { allocator().free(address()); }
 
@@ -48,5 +44,15 @@ template <typename T> struct external_ptr {
 	Allocator *_allocator{};
 	Address _address;
 };
+
+template <typename T>
+external_ptr<T> external_ptr<T>::operator+(size_t i) const {
+	return external_ptr{allocator(), address() + i * allocation_size};
+}
+
+template <typename T>
+external_ptr<T> external_ptr<T>::operator-(size_t i) const {
+	return external_ptr{allocator(), address() - i * allocation_size};
+}
 
 } // namespace rambock
