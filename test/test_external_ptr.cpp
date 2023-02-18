@@ -62,4 +62,15 @@ TEST_CASE("Test external pointer semantics", "[external_ptr]") {
 
 		ptr.free();
 	}
+
+	SECTION("Offsets index into arrays") {
+		auto ptr = allocator.make_array<Data>(2);
+		auto a_ptr = ptr + 0;
+		auto b_ptr = ptr + 1;
+
+		REQUIRE(++a_ptr == b_ptr);
+		REQUIRE(--a_ptr == ptr);
+
+		ptr.free();
+	}
 }

@@ -17,7 +17,8 @@ template <typename T> struct external_ptr {
 	constexpr external_ptr(external_ptr &&) noexcept = default;
 	external_ptr &operator=(const external_ptr &) = default;
 	external_ptr &operator=(external_ptr &&) noexcept = default;
-
+	bool operator==(const external_ptr &rhs) const;
+	bool operator!=(const external_ptr &rhs) const;
 	inline Allocator &allocator() const { return *_allocator; }
 	inline Address address() const { return _address; }
 
@@ -25,8 +26,8 @@ template <typename T> struct external_ptr {
 	inline LocalCopy<T> operator*() const {
 		return LocalCopy<T>{allocator().memory_device(), address()};
 	}
-	inline external_ptr &operator++() { *this = *this + 1; }
-	inline external_ptr &operator--() { *this = *this - 1; }
+	inline external_ptr &operator++();
+	inline external_ptr &operator--();
 	inline external_ptr operator++(int) const { return *this + 1; }
 	inline external_ptr operator--(int) const { return *this - 1; }
 	inline external_ptr operator+(size_t i) const;
@@ -61,5 +62,25 @@ constexpr external_ptr<T>::external_ptr(external_ptr::Allocator &allocator,
 										const Address address)
 	: _allocator{&allocator}
 	, _address{address} {}
+
+template <typename T>
+bool external_ptr<T>::operator==(const external_ptr &rhs) const {
+	return _allocator == rhs._allocator && _address == rhs._address;
+}
+
+template <typename T>
+bool external_ptr<T>::operator!=(const external_ptr &rhs) const {
+	return !(rhs == *this);
+}
+
+template <typename T> external_ptr<T> &external_ptr<T>::operator--() {
+	*this = *this - 1;
+	return *this;
+}
+
+template <typename T> external_ptr<T> &external_ptr<T>::operator++() {
+	*this = *this + 1;
+	return *this;
+}
 
 } // namespace rambock
