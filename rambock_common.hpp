@@ -36,7 +36,7 @@ struct Address {
 		return Address(value + n);
 	}
 	constexpr Size operator-(const Address &other) const {
-		return other.value - value;
+		return value - other.value;
 	}
 
 	constexpr bool operator<(const Address &other) const {
