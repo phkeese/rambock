@@ -12,7 +12,7 @@ template <typename T> struct external_ptr {
 		sizeof(typename LocalCopy<T>::ExternalFrame);
 
 	constexpr explicit external_ptr(Allocator &allocator);
-	constexpr external_ptr(Allocator &allocator, const Address address);
+	constexpr external_ptr(Allocator &allocator, Address address);
 	constexpr external_ptr(const external_ptr &) = default;
 	constexpr external_ptr(external_ptr &&) noexcept = default;
 	external_ptr &operator=(const external_ptr &) = default;
