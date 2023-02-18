@@ -16,6 +16,7 @@ add_library(rambock
         examples/simple_usage.cpp
         external_ptr.hpp
         layers/base_layer.hpp
+        layers/cache_layer.hpp
         memory_device.hpp
         mocks/mock_memory_device.hpp
         rambock_common.hpp
