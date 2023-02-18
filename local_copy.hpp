@@ -21,7 +21,7 @@
 
 namespace rambock {
 
-namespace allocators {
+namespace helpers {
 struct TemplateAllocator;
 }
 template <typename T> struct external_ptr;
@@ -53,7 +53,7 @@ template <typename T> struct LocalCopy {
 	Address _address;
 	ExternalFrame _frame;
 
-	friend struct rambock::allocators::TemplateAllocator;
+	friend struct rambock::helpers::TemplateAllocator;
 	friend struct rambock::external_ptr<T>;
 
 	struct ExternalFrame {

@@ -1,12 +1,13 @@
 #include "../allocators/bump_allocator.hpp"
-#include "../allocators/template_allocator.hpp"
 #include "../external_ptr.hpp"
+#include "../helpers/template_allocator.hpp"
 #include "../mocks/mock_memory_device.hpp"
 #include <catch2/catch_all.hpp>
 
 using namespace rambock;
 using namespace allocators;
 using namespace mocks;
+using namespace helpers;
 
 TEST_CASE("Test external pointer semantics", "[external_ptr]") {
 	constexpr Size memory_size = 1024;

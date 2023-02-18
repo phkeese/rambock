@@ -1,15 +1,15 @@
 #include "../allocators/bump_allocator.hpp"
 #include "../allocators/simple_allocator.hpp"
-#include "../allocators/template_allocator.hpp"
+#include "../helpers/template_allocator.hpp"
 #include "../mocks/mock_memory_device.hpp"
 #include <iostream>
 
 using rambock::Address;
 using rambock::external_ptr;
-using rambock::mocks::MockMemoryDevice;
 using rambock::allocators::BumpAllocator;
 using rambock::allocators::SimpleAllocator;
-using rambock::allocators::TemplateAllocator;
+using rambock::helpers::TemplateAllocator;
+using rambock::mocks::MockMemoryDevice;
 
 rambock::external_ptr<int>
 generate(rambock::allocators::BaseAllocator &allocator) {
