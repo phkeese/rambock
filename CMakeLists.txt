@@ -3,6 +3,11 @@ project(rambock)
 
 set(CMAKE_CXX_STANDARD 11)
 
+option(REQUIRE_STRICT_CONSTRAINTS "Require strict checks using <type_traits>" ON)
+if (REQUIRE_STRICT_CONSTRAINTS)
+    ADD_COMPILE_DEFINITIONS(STRICT_CHECKS)
+endif ()
+
 add_library(rambock
         allocators/base_allocator.hpp
         allocators/bump_allocator.hpp

@@ -3,6 +3,13 @@
 #include <cstddef>
 #include <cstdlib>
 
+#ifdef STRICT_CHECKS
+#include <type_traits>
+#define CHECK_CONSTRAINTS(T) static_assert(std::is_trivially_copyable<T>(), "T must be trivially copyable");
+#else
+#define CHECK_CONSTRAINTS(T)
+#endif
+
 namespace rambock {
 
 namespace allocators {
@@ -10,6 +17,8 @@ struct TemplateAllocator;
 }
 
 template <typename T> struct LocalCopy {
+	CHECK_CONSTRAINTS(T);
+
 	LocalCopy(MemoryDevice &memoryDevice, Address address);
 	~LocalCopy();
 
