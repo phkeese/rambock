@@ -6,7 +6,7 @@ using namespace rambock;
 using namespace allocators;
 using namespace mocks;
 
-TEST_CASE("Simple allocator allocates memory", "[allocators]") {
+TEST_CASE("Simple allocator allocates memory", "[simple_allocator]") {
 	constexpr Size memory_size = 1024;
 	MockMemoryDevice<memory_size> memory_device{};
 	SimpleAllocator allocator{memory_device, Address(memory_size)};

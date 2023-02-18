@@ -39,5 +39,5 @@ add_executable(tests
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain rambock)
 
 enable_testing()
-add_test(test-allocators tests [allocators])
+add_test(test-simple-allocator tests [simple_allocator])
 add_test(test-core tests [core])
