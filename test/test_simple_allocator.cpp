@@ -10,7 +10,6 @@ TEST_CASE("Simple allocator allocates memory", "[allocators]") {
 	constexpr Size memory_size = 1024;
 	MockMemoryDevice<memory_size> memory_device{};
 	SimpleAllocator allocator{memory_device, Address(memory_size)};
-	allocator.begin();
 
 	SECTION("Allocation returns an address") {
 		Address address = allocator.allocate(100);

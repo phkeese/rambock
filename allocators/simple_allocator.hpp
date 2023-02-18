@@ -60,11 +60,12 @@ class SimpleAllocator : public BaseAllocator {
 
 	Size _free_bytes;
 
+	// setup data structures in memory for allocation
+	void begin();
+
   public:
 	SimpleAllocator(MemoryDevice &memory_device, Address end);
 
-	// setup data structures in memory for allocation
-	void begin();
 
 	Address allocate(Size count) override;
 	Size free(Address address) override;
@@ -74,7 +75,9 @@ class SimpleAllocator : public BaseAllocator {
 SimpleAllocator::SimpleAllocator(MemoryDevice &memory_device, Address end)
 	: BaseAllocator(memory_device)
 	, _end(end)
-	, _free_bytes{end} {}
+	, _free_bytes{end} {
+	begin();
+}
 
 void SimpleAllocator::begin() {
 	/** Special header to store data about the array
