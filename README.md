@@ -9,7 +9,7 @@ An external memory library for C++11 with special considerations for embedded de
 - [ ] Test functionality of each class
 - [ ] Implement virtual memory allocator
 - [ ] Implement `vector`-like datastructure
-- [ ] Install CI checks in repository
+- [x] Install CI checks in repository
 - [ ] Implement LRU cache
 - [ ] Allow bypassing cache for small accesses
 - [ ] Implement dynamically sized cache
