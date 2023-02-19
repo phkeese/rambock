@@ -13,6 +13,8 @@
 !mocks
 !test
 !helpers
+!vcpkg
+!vcpkg.json
 
 # Wildcards
 !**/*.cpp
