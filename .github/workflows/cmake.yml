@@ -10,7 +10,11 @@
 #   described by the vcpkg.json manifest file. It will be a no-op if those are restored from cache.
 # - Finally builds the sources with Ninja.
 name: hosted-ninja-vcpkg_submod-autocache
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   job:
