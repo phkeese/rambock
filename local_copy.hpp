@@ -5,16 +5,18 @@
 
 #ifdef STRICT_CHECKS
 #include <type_traits>
+// Required since LocalCopy copies into T
 #define CHECK_TRIVIALLY_COPYABLE(T)                \
 	static_assert(std::is_trivially_copyable<T>(), \
 				  "T must be trivially copyable");
-#define CHECK_TRIVIALLY_DEFAULT_CONSTRUCTABLE(T)                \
-	static_assert(std::is_trivially_default_constructible<T>(), \
-				  "T must be default constructable");
+// Required because make_array constructs a default object as initial value
+#define CHECK_DEFAULT_CONSTRUCTIBLE(T)                \
+	static_assert(std::is_default_constructible<T>(), \
+				  "T must be default constructible");
 
 #define CHECK_CONSTRAINTS(T)    \
 	CHECK_TRIVIALLY_COPYABLE(T) \
-	CHECK_TRIVIALLY_DEFAULT_CONSTRUCTABLE(T)
+	CHECK_DEFAULT_CONSTRUCTIBLE(T)
 #else
 #define CHECK_CONSTRAINTS(T)
 #endif
