@@ -22,6 +22,7 @@ add_library(rambock
         layers/cache_layer.hpp
         memory_device.hpp
         mocks/mock_memory_device.hpp
+        mocks/mock_slow_layer.hpp
         rambock_common.hpp
         )
 
