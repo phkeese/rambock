@@ -11,6 +11,7 @@ template <typename T> struct external_ptr {
 	static constexpr Size allocation_size =
 		sizeof(typename LocalCopy<T>::ExternalFrame);
 
+	constexpr external_ptr() = default;
 	constexpr explicit external_ptr(Allocator &allocator);
 	constexpr external_ptr(Allocator &allocator, Address address);
 	constexpr external_ptr(const external_ptr &) = default;

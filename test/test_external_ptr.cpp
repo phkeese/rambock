@@ -75,3 +75,23 @@ TEST_CASE("Test external pointer semantics", "[external_ptr]") {
 		ptr.free();
 	}
 }
+
+TEST_CASE("test multi-stage pointer access", "[external_ptr]") {
+	constexpr Size memory_size = 1024;
+	MockMemoryDevice<memory_size> memory_device{};
+	BumpAllocator bump_allocator{memory_device, Address{memory_size}};
+	TemplateAllocator allocator{bump_allocator};
+
+	struct InnerData {
+		int i;
+	};
+
+	struct OuterData {
+		external_ptr<InnerData> data;
+	};
+
+	auto inner_ptr = allocator.make_external<InnerData>(10);
+	auto outer_ptr = allocator.make_external<OuterData>(inner_ptr);
+
+	REQUIRE(outer_ptr->data->i == 10);
+}
