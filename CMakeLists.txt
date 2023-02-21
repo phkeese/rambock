@@ -51,3 +51,10 @@ add_test(test-simple-allocator tests [simple_allocator])
 add_test(test-core tests [core])
 add_test(test-external-ptr tests [external_ptr])
 add_test(test-layers tests [layers])
+
+add_executable(benchmark
+        benchmarks/benchmark_cached_access.cpp
+        )
+
+target_link_libraries(benchmark PRIVATE Catch2::Catch2WithMain rambock)
+add_test(benchmark-cached-access benchmark "benchmark cached access")

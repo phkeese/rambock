@@ -15,6 +15,7 @@
 !helpers
 !vcpkg
 !vcpkg.json
+!benchmarks
 
 # Wildcards
 !**/*.cpp
