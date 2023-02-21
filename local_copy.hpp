@@ -84,7 +84,9 @@ rambock::LocalCopy<T>::LocalCopy(MemoryDevice &memory_device,
 								 const T &value)
 	: _memory_device{&memory_device}
 	, _address(address)
-	, _frame{&_frame.value, value} {}
+	, _frame{nullptr, value} {
+	_frame.local_address = &_frame.value;
+}
 
 template <typename T> LocalCopy<T> &LocalCopy<T>::operator=(const T &value) {
 	*local_address() = value;
